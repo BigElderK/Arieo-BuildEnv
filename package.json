@@ -7,5 +7,5 @@
     {
         "setup_env": "scripts/setup_env.sh"
     },
-    "install_command": "cmake -DOUTPUT_BASE_FOLDER=$ENV{DEVCRAFT_WORKSPACE} -P install.cmake"
+    "install_command": "cmake -P install_package.cmake"
 }

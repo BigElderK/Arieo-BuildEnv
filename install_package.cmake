@@ -1,11 +1,19 @@
 cmake_minimum_required(VERSION 3.20)
 
-# OUTPUT_BASE_FOLDER must be set from command line
-if(NOT DEFINED OUTPUT_BASE_FOLDER)
-    message(FATAL_ERROR "OUTPUT_BASE_FOLDER is not defined. Please specify it with -DOUTPUT_BASE_FOLDER=<path>")
+# INSTALL_FOLDER must be set from command line or environment variable
+if(NOT DEFINED INSTALL_FOLDER)
+    # Try to get from environment variable
+    if(DEFINED ENV{INSTALL_FOLDER})
+        set(INSTALL_FOLDER "$ENV{INSTALL_FOLDER}")
+        message(STATUS "Using INSTALL_FOLDER from environment: ${INSTALL_FOLDER}")
+    else()
+        message(FATAL_ERROR "INSTALL_FOLDER is not defined. Please specify it with -DINSTALL_FOLDER=<path> or set INSTALL_FOLDER environment variable")
+    endif()
+else()
+    message(STATUS "Using INSTALL_FOLDER from command line: ${INSTALL_FOLDER}")
 endif()
 
-message(STATUS "Using OUTPUT_BASE_FOLDER: ${OUTPUT_BASE_FOLDER}")
+message(STATUS "Using INSTALL_FOLDER: ${INSTALL_FOLDER}")
 
 function(generate_conan_toolchain_profile)
     set(oneValueArgs
@@ -60,24 +68,24 @@ endfunction()
 
 generate_conan_toolchain_profile(
     CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.android.armv8.txt
-    OUTPUT_FOLDER ${OUTPUT_BASE_FOLDER}/host/android/armv8
+    OUTPUT_FOLDER ${INSTALL_FOLDER}/host/android/armv8
 )
 
 generate_conan_toolchain_profile(
     CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.raspberry.armv8.txt
-    OUTPUT_FOLDER ${OUTPUT_BASE_FOLDER}/host/raspberry/armv8
+    OUTPUT_FOLDER ${INSTALL_FOLDER}/host/raspberry/armv8
 )
 
 generate_conan_toolchain_profile(
     CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.ubuntu.x86_64.txt
-    OUTPUT_FOLDER ${OUTPUT_BASE_FOLDER}/host/ubuntu/x86_64
+    OUTPUT_FOLDER ${INSTALL_FOLDER}/host/ubuntu/x86_64
 )
 
 # Add host profiles only for windows platform
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt
-        OUTPUT_FOLDER ${OUTPUT_BASE_FOLDER}/host/windows/x86_64
+        OUTPUT_FOLDER ${INSTALL_FOLDER}/host/windows/x86_64
     )
 else()
     #message(FATAL_ERROR "Windows platform only support Windows host system.")
@@ -87,7 +95,7 @@ endif()
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.macos.arm64.txt
-        OUTPUT_FOLDER ${OUTPUT_BASE_FOLDER}/host/macos/arm64
+        OUTPUT_FOLDER ${INSTALL_FOLDER}/host/macos/arm64
     )
 else()
     #message(FATAL_ERROR "macOS platform only supports Darwin host system.")
