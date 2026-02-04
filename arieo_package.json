@@ -2,5 +2,8 @@
     "name": "areio.build_env",
     "description": "Build environment for Areio projects",
     "main": "index.js",
-    "install_command": "cmake -P install_package.cmake"
+    "build_commands": 
+    [
+        "cmake -P build_package.cmake"
+    ]
 }
