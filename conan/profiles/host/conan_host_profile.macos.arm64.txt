@@ -1,0 +1,47 @@
+#https://docs.conan.io/2/reference/config_files/settings.html
+
+[settings]
+os=Macos
+arch=armv8
+build_type=Release
+
+compiler=clang
+compiler.version=20
+#compiler.libcxx=libc++
+compiler.cppstd=20
+build_type=Release
+
+[tool_requires]
+#llvm/20.1.1@arieo/dev
+#ninja/1.12.1
+#cmake/3.31.6
+
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.cmake.cmakedeps:new=will_break_next
+
+# Set compilers and abi
+tools.build:compiler_executables={'c': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'cpp': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang++${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'ld': '$ENV{DEVCRAFT_WORKSPACE}/llvm/lld-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/lld${CMAKE_HOST_EXECUTABLE_SUFFIX}'}
+tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "arm64-apple-darwin", "CMAKE_CXX_COMPILER_TARGET":  "arm64-apple-darwin", "CMAKE_C_COMPILER_TARGET": "arm64-apple-darwin", "CMAKE_ASM_COMPILER_TARGET":"arm64-apple-darwin", "CMAKE_LINKER_TYPE": "LLD"}
+
+# Set MacOSX sdk location
+# tools.apple:sdk_path=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+
+# Set to use libc++, the "-nostdinc++", "-nostdlib++" needed to manually include c++ and link libc++
+tools.build:cxxflags=+["-nostdinc++"]
+tools.build:sharedlinkflags=+["-nostdlib++"]
+tools.build:exelinkflags=+["-nostdlib++"]
+
+# Set C++ location
+tools.build:sysroot=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+tools.build:cxxflags=+["-I$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/arm64-apple-darwin/include/c++/v1"]
+tools.build:sharedlinkflags=+["-L$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/arm64-apple-darwin/lib/c++", "-lc++"]
+tools.build:exelinkflags=+["-L$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/arm64-apple-darwin/lib/c++", "-lc++"]
+
+# Extra flags
+tools.build:cxxflags=+["-Wno-invalid-partial-specialization"]
+
+#tools.build:cxxflags=+["-v"]
+
+[buildenv]
+CONAN_BUILD_ENV_CHECK=true

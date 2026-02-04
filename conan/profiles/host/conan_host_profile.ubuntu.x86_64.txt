@@ -1,0 +1,49 @@
+#https://docs.conan.io/2/reference/config_files/settings.html
+
+[settings]
+os=Linux
+arch=x86_64
+
+compiler=clang
+compiler.version=21
+#compiler.libcxx=libc++
+compiler.cppstd=20
+build_type=Release
+
+[options]
+*:shared=False
+*:fPIC=True
+
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.cmake.cmakedeps:new=will_break_next
+
+# Set compilers and abi
+tools.build:compiler_executables={'c': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'cpp': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang++${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'ld': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/lld${CMAKE_HOST_EXECUTABLE_SUFFIX}'}
+tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "x86_64-linux-gnu", "CMAKE_CXX_COMPILER_TARGET":  "x86_64-linux-gnu", "CMAKE_C_COMPILER_TARGET": "x86_64-linux-gnu", "CMAKE_ASM_COMPILER_TARGET":"x86_64-linux-gnu", "CMAKE_LINKER_TYPE": "LLD"}
+
+# Set sysroot
+tools.build:sysroot = $ENV{DEVCRAFT_WORKSPACE}/sysroot/ubuntu_amd64_24.04
+
+# Set to use libc++, the "-nostdinc++", "-nostdlib++" needed to manually include c++ and link libc++
+tools.build:cxxflags=+["-nostdinc++"]
+tools.build:sharedlinkflags=+["-nostdlib++"]
+tools.build:exelinkflags=+["-nostdlib++"]
+
+# Set c++ location
+tools.build:cxxflags=+["-I${CMAKE_SYSROOT}/usr/include", "-I$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/x86_64-linux-gnu/include/c++/v1", "-I$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/x86_64-linux-gnu/include/x86_64-unknown-linux-gnu/c++/v1"]
+tools.build:cflags=+["-I${CMAKE_SYSROOT}/usr/include"]
+tools.build:sharedlinkflags=+["-L$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/x86_64-linux-gnu/lib/x86_64-unknown-linux-gnu", "-L${CMAKE_SYSROOT}/usr/lib/x86_64-linux-gnu", "-lc++"]
+tools.build:exelinkflags=+["-L$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/x86_64-linux-gnu/lib/x86_64-unknown-linux-gnu", "-L${CMAKE_SYSROOT}/usr/lib/x86_64-linux-gnu", "-lc++"]
+
+# Link libuwind and compiler-rt
+tools.build:sharedlinkflags=+["-resource-dir=$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/x86_64-linux-gnu/lib/clang/21", "-lunwind", "-rtlib=compiler-rt"]
+tools.build:exelinkflags=+["-resource-dir=$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/x86_64-linux-gnu/lib/clang/21", "-lunwind", "-rtlib=compiler-rt"]
+
+
+# For Debug
+#tools.cmake.cmaketoolchain:extra_variables={"CMAKE_VERBOSE_MAKEFILE": "True"}
+#tools.build:cxxflags=+["-v"]
+
+[buildenv]
+CONAN_BUILD_ENV_CHECK=true
