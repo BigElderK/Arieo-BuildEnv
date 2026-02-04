@@ -1,11 +1,6 @@
 {
     "name": "areio.build_env",
-    "version": "0.1.0",
     "description": "Build environment for Areio projects",
     "main": "index.js",
-    "install_scripts":
-    {
-        "setup_env": "scripts/setup_env.sh"
-    },
     "install_command": "cmake -P install_package.cmake"
 }
