@@ -13,6 +13,20 @@ else()
     message(STATUS "Using INSTALL_FOLDER from command line: ${INSTALL_FOLDER}")
 endif()
 
+# Check if ARIEO_PACKAGE_BUILDENV_HOST_PRESET is defined
+if(NOT DEFINED ARIEO_PACKAGE_BUILDENV_HOST_PRESET)
+    # Try to get from environment variable
+    if(DEFINED ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET})
+        set(ARIEO_PACKAGE_BUILDENV_HOST_PRESET "$ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET}")
+        message(STATUS "Using ARIEO_PACKAGE_BUILDENV_HOST_PRESET from environment: ${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}")
+    else()
+        message(FATAL_ERROR "ARIEO_PACKAGE_BUILDENV_HOST_PRESET is not defined. Please specify it with -DARIEO_PACKAGE_BUILDENV_HOST_PRESET=<preset> or set ARIEO_PACKAGE_BUILDENV_HOST_PRESET environment variable")
+    endif()
+else()
+    message(STATUS "Using ARIEO_PACKAGE_BUILDENV_HOST_PRESET from command line: ${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}")
+endif()
+
+
 message(STATUS "Using INSTALL_FOLDER: ${INSTALL_FOLDER}")
 
 function(generate_conan_toolchain_profile)
@@ -66,37 +80,48 @@ function(generate_conan_toolchain_profile)
     endif()
 endfunction()
 
-generate_conan_toolchain_profile(
-    CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.android.armv8.txt
-    OUTPUT_FOLDER ${INSTALL_FOLDER}/host/android/armv8
-)
 
-generate_conan_toolchain_profile(
-    CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.raspberry.armv8.txt
-    OUTPUT_FOLDER ${INSTALL_FOLDER}/host/raspberry/armv8
-)
+if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "android.armv8")
+    generate_conan_toolchain_profile(
+        CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.android.armv8.txt
+        OUTPUT_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+    )
+endif()
 
-generate_conan_toolchain_profile(
-    CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.ubuntu.x86_64.txt
-    OUTPUT_FOLDER ${INSTALL_FOLDER}/host/ubuntu/x86_64
-)
+if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "raspberry.armv8")
+    generate_conan_toolchain_profile(
+        CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.raspberry.armv8.txt
+        OUTPUT_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+    )
+endif()
+
+if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "ubuntu.x86_64")
+    generate_conan_toolchain_profile(
+        CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.ubuntu.x86_64.txt
+        OUTPUT_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+    )
+endif()
 
 # Add host profiles only for windows platform
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    generate_conan_toolchain_profile(
-        CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt
-        OUTPUT_FOLDER ${INSTALL_FOLDER}/host/windows/x86_64
-    )
+    if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "windows.x86_64")
+        generate_conan_toolchain_profile(
+            CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt
+            OUTPUT_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        )
+    endif()
 else()
     #message(FATAL_ERROR "Windows platform only support Windows host system.")
 endif()
 
 # Add host profiles only for darwin platform
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-    generate_conan_toolchain_profile(
-        CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.macos.arm64.txt
-        OUTPUT_FOLDER ${INSTALL_FOLDER}/host/macos/arm64
-    )
+    if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "macos.arm64")
+        generate_conan_toolchain_profile(
+            CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.macos.arm64.txt
+            OUTPUT_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        )
+    endif()
 else()
     #message(FATAL_ERROR "macOS platform only supports Darwin host system.")
 endif()
