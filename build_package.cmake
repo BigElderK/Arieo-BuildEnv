@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.20)
 
-# INSTALL_FOLDER must be set from command line or environment variable
-if(NOT DEFINED INSTALL_FOLDER)
+# OUTPUT_FOLDER must be set from command line or environment variable
+if(NOT DEFINED OUTPUT_FOLDER)
     # Try to get from environment variable
-    if(DEFINED ENV{INSTALL_FOLDER})
-        set(INSTALL_FOLDER "$ENV{INSTALL_FOLDER}")
-        message(STATUS "Using INSTALL_FOLDER from environment: ${INSTALL_FOLDER}")
+    if(DEFINED ENV{OUTPUT_FOLDER})
+        set(OUTPUT_FOLDER "$ENV{OUTPUT_FOLDER}")
+        message(STATUS "Using OUTPUT_FOLDER from environment: ${OUTPUT_FOLDER}")
     else()
-        message(FATAL_ERROR "INSTALL_FOLDER is not defined. Please specify it with -DINSTALL_FOLDER=<path> or set INSTALL_FOLDER environment variable")
+        message(FATAL_ERROR "OUTPUT_FOLDER is not defined. Please specify it with -DOUTPUT_FOLDER=<path> or set OUTPUT_FOLDER environment variable")
     endif()
 else()
-    message(STATUS "Using INSTALL_FOLDER from command line: ${INSTALL_FOLDER}")
+    message(STATUS "Using OUTPUT_FOLDER from command line: ${OUTPUT_FOLDER}")
 endif()
 
 # Check if ARIEO_PACKAGE_BUILDENV_HOST_PRESET is defined
@@ -27,7 +27,7 @@ else()
 endif()
 
 
-message(STATUS "Using INSTALL_FOLDER: ${INSTALL_FOLDER}")
+message(STATUS "Using OUTPUT_FOLDER: ${OUTPUT_FOLDER}")
 
 function(generate_conan_toolchain_profile)
     set(oneValueArgs
@@ -87,21 +87,21 @@ endfunction()
 if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "android.armv8")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.android.armv8.txt
-        OUTPUT_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
     )
 endif()
 
 if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "raspberry.armv8")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.raspberry.armv8.txt
-        OUTPUT_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
     )
 endif()
 
 if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "ubuntu.x86_64")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.ubuntu.x86_64.txt
-        OUTPUT_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
     )
 endif()
 
@@ -110,7 +110,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "windows.x86_64")
         generate_conan_toolchain_profile(
             CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt
-            OUTPUT_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+            OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
         )
     endif()
 else()
@@ -122,12 +122,12 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "macos.arm64")
         generate_conan_toolchain_profile(
             CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.macos.arm64.txt
-            OUTPUT_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+            OUTPUT_FOLDER ${OUTPUT_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
         )
     endif()
 else()
     #message(FATAL_ERROR "macOS platform only supports Darwin host system.")
 endif()
 
-# Copy cmake folder to INSTALL_FOLDER
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/cmake DESTINATION ${INSTALL_FOLDER})
+# Copy cmake folder to OUTPUT_FOLDER
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/cmake DESTINATION ${OUTPUT_FOLDER})
