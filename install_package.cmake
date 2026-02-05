@@ -1,16 +1,16 @@
 cmake_minimum_required(VERSION 3.20)
 
-# OUTPUT_FOLDER must be set from command line or environment variable
-if(NOT DEFINED OUTPUT_FOLDER)
+# INSTALL_FOLDER must be set from command line or environment variable
+if(NOT DEFINED INSTALL_FOLDER)
     # Try to get from environment variable
-    if(DEFINED ENV{OUTPUT_FOLDER})
-        set(OUTPUT_FOLDER "$ENV{OUTPUT_FOLDER}")
-        message(STATUS "Using OUTPUT_FOLDER from environment: ${OUTPUT_FOLDER}")
+    if(DEFINED ENV{INSTALL_FOLDER})
+        set(INSTALL_FOLDER "$ENV{INSTALL_FOLDER}")
+        message(STATUS "Using INSTALL_FOLDER from environment: ${INSTALL_FOLDER}")
     else()
-        message(FATAL_ERROR "OUTPUT_FOLDER is not defined. Please specify it with -DOUTPUT_FOLDER=<path> or set OUTPUT_FOLDER environment variable")
+        message(FATAL_ERROR "INSTALL_FOLDER is not defined. Please specify it with -DINSTALL_FOLDER=<path> or set INSTALL_FOLDER environment variable")
     endif()
 else()
-    message(STATUS "Using OUTPUT_FOLDER from command line: ${OUTPUT_FOLDER}")
+    message(STATUS "Using INSTALL_FOLDER from command line: ${INSTALL_FOLDER}")
 endif()
 
 # Check if ARIEO_PACKAGE_BUILDENV_HOST_PRESET is defined
@@ -27,12 +27,12 @@ else()
 endif()
 
 
-message(STATUS "Using OUTPUT_FOLDER: ${OUTPUT_FOLDER}")
+message(STATUS "Using INSTALL_FOLDER: ${INSTALL_FOLDER}")
 
 function(generate_conan_toolchain_profile)
     set(oneValueArgs
         CONAN_PROFILE_FILE
-        OUTPUT_FOLDER
+        INSTALL_FOLDER
     )
     
     cmake_parse_arguments(
@@ -48,7 +48,7 @@ function(generate_conan_toolchain_profile)
             install ${CMAKE_CURRENT_LIST_DIR}/conan/conanfile.txt
             --update
             --generator CMakeToolchain
-            --output-folder ${ARGUMENT_OUTPUT_FOLDER}
+            --output-folder ${ARGUMENT_INSTALL_FOLDER}
             --build=never
             --profile=${ARGUMENT_CONAN_PROFILE_FILE}
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -63,9 +63,9 @@ function(generate_conan_toolchain_profile)
         exit(1)
     endif()
 
-    # Make all .sh under OUTPUT_FOLDER executable
+    # Make all .sh under INSTALL_FOLDER executable
     if (NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-        file(GLOB_RECURSE SH_FILES "${ARGUMENT_OUTPUT_FOLDER}/*.sh")
+        file(GLOB_RECURSE SH_FILES "${ARGUMENT_INSTALL_FOLDER}/*.sh")
         foreach(SH_FILE ${SH_FILES})
             execute_process(
                 COMMAND chmod +x "${SH_FILE}"
@@ -79,29 +79,29 @@ function(generate_conan_toolchain_profile)
         endforeach()
     endif()
 
-    # Copy conanfile.txt to OUTPUT_FOLDER
-    file(COPY ${ARGUMENT_CONAN_PROFILE_FILE} DESTINATION ${ARGUMENT_OUTPUT_FOLDER})
+    # Copy conanfile.txt to INSTALL_FOLDER
+    file(COPY ${ARGUMENT_CONAN_PROFILE_FILE} DESTINATION ${ARGUMENT_INSTALL_FOLDER})
 endfunction()
 
 
 if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "android.armv8")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.android.armv8.txt
-        OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
     )
 endif()
 
 if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "raspberry.armv8")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.raspberry.armv8.txt
-        OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
     )
 endif()
 
 if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "ubuntu.x86_64")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.ubuntu.x86_64.txt
-        OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
     )
 endif()
 
@@ -110,7 +110,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "windows.x86_64")
         generate_conan_toolchain_profile(
             CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt
-            OUTPUT_FOLDER ${OUTPUT_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+            INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
         )
     endif()
 else()
@@ -122,12 +122,12 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "macos.arm64")
         generate_conan_toolchain_profile(
             CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.macos.arm64.txt
-            OUTPUT_FOLDER ${OUTPUT_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+            INSTALL_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
         )
     endif()
 else()
     #message(FATAL_ERROR "macOS platform only supports Darwin host system.")
 endif()
 
-# Copy cmake folder to OUTPUT_FOLDER
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/cmake DESTINATION ${OUTPUT_FOLDER})
+# Copy cmake folder to INSTALL_FOLDER
+file(COPY ${CMAKE_CURRENT_LIST_DIR}/cmake DESTINATION ${INSTALL_FOLDER})
