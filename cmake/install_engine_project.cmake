@@ -39,6 +39,15 @@ function(install_engine_project)
     message(STATUS "  Build Type: ${ARGUMENT_BUILD_TYPE}")
     message(STATUS "================================================================")
 
+    # Clean install destination before installing
+    if(EXISTS "${ARGUMENT_INSTALL_PREFIX}")
+        message(STATUS "Cleaning install destination: ${ARGUMENT_INSTALL_PREFIX}")
+        file(REMOVE_RECURSE "${ARGUMENT_INSTALL_PREFIX}")
+    endif()
+
+    # Recreate install directory
+    file(MAKE_DIRECTORY "${ARGUMENT_INSTALL_PREFIX}")
+
     # Execute install
     execute_process(
         COMMAND ${CMAKE_COMMAND} --install ${ARGUMENT_BUILD_FOLDER} --prefix ${ARGUMENT_INSTALL_PREFIX} --config ${ARGUMENT_BUILD_TYPE}

@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.31)
 
+# Include CMake helpers for package config generation
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 # ==================== Reusable Install Configuration Function ====================
 # This function configures CMake installation for a target project
 # Handles: library installation, header installation, target export, and config file generation

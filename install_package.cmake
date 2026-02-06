@@ -27,8 +27,6 @@ else()
 endif()
 
 
-message(STATUS "Using INSTALL_FOLDER: ${INSTALL_FOLDER}")
-
 function(generate_conan_toolchain_profile)
     set(oneValueArgs
         CONAN_PROFILE_FILE
@@ -42,6 +40,15 @@ function(generate_conan_toolchain_profile)
         ""
         ${ARGN}
     )
+
+    message(STATUS "Using INSTALL_FOLDER: ${ARGUMENT_INSTALL_FOLDER}")
+    # Clean install folder before installing new artifacts
+    if(EXISTS "${ARGUMENT_INSTALL_FOLDER}")
+        message(STATUS "Cleaning install folder: ${ARGUMENT_INSTALL_FOLDER}")
+        file(REMOVE_RECURSE "${ARGUMENT_INSTALL_FOLDER}")
+    endif()
+    # Recreate install directory
+    file(MAKE_DIRECTORY "${ARGUMENT_INSTALL_FOLDER}")
 
     execute_process(
         COMMAND conan
@@ -129,5 +136,34 @@ else()
     #message(FATAL_ERROR "macOS platform only supports Darwin host system.")
 endif()
 
-# Copy cmake folder to INSTALL_FOLDER
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/cmake DESTINATION ${INSTALL_FOLDER})
+##########################################################################################
+# Create a stub cmake file in INSTALL_FOLDER that includes BuildEnv cmake
+file(MAKE_DIRECTORY "${INSTALL_FOLDER}/cmake")
+file(WRITE "${INSTALL_FOLDER}/cmake/build_environment.cmake"
+"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/engine_project.cmake\")\n"
+"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/install_engine_project.cmake\")\n"
+"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/build_engine_project.cmake\")\n"
+)
+
+##########################################################################################
+# Generate CMakeUserPresets.json in source directory with resolved paths
+file(WRITE "${INSTALL_FOLDER}/cmake/CMakePresets.json"
+"{
+    \"version\": 4,
+    \"cmakeMinimumRequired\": {
+        \"major\": 3,
+        \"minor\": 20,
+        \"patch\": 0
+    },
+    \"include\": [
+        \"${CMAKE_CURRENT_LIST_DIR}/cmake/presets/base.json\",
+        \"${CMAKE_CURRENT_LIST_DIR}/cmake/presets/windows.x86_64.json\",
+        \"${CMAKE_CURRENT_LIST_DIR}/cmake/presets/macos.arm64.json\",
+        \"${CMAKE_CURRENT_LIST_DIR}/cmake/presets/ubuntu.x86_64.json\",
+        \"${CMAKE_CURRENT_LIST_DIR}/cmake/presets/raspberry.armv8.json\",
+        \"${CMAKE_CURRENT_LIST_DIR}/cmake/presets/android.armv8.json\",
+        \"${CMAKE_CURRENT_LIST_DIR}/cmake/presets/windows-dev.x86_64.json\"
+    ]
+}
+")
+message(STATUS "Generated CMakeUserPresets.json in ${ARGUMENT_SOURCE_CMAKE_LIST_DIR}")

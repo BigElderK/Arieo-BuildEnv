@@ -48,30 +48,11 @@ function(build_engine_project)
     endif()
 
     ##########################################################################################
-    # Generate CMakeUserPresets.json in source directory with resolved paths
-    set(FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER "$ENV{ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}")
-    # Convert to forward slashes (JSON and CMake both accept them on all platforms)
-    string(REPLACE "\\" "/" FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER "${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}")
-    file(WRITE "${ARGUMENT_SOURCE_CMAKE_LIST_DIR}/CMakeUserPresets.json"
-"{
-    \"version\": 4,
-    \"cmakeMinimumRequired\": {
-        \"major\": 3,
-        \"minor\": 20,
-        \"patch\": 0
-    },
-    \"include\": [
-        \"${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/presets/base.json\",
-        \"${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/presets/windows.x86_64.json\",
-        \"${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/presets/macos.arm64.json\",
-        \"${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/presets/ubuntu.x86_64.json\",
-        \"${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/presets/raspberry.armv8.json\",
-        \"${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/presets/android.armv8.json\",
-        \"${FORMATTED_ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/presets/windows-dev.x86_64.json\"
-    ]
-}
-")
-    message(STATUS "Generated CMakeUserPresets.json in ${ARGUMENT_SOURCE_CMAKE_LIST_DIR}")
+    # Copy pre-generated presets into the source directory (overwrite if exists)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E copy
+        "$ENV{ARIEO_PACKAGE_BUILDENV_INSTALL_FOLDER}/cmake/CMakePresets.json"
+        "${ARGUMENT_SOURCE_CMAKE_LIST_DIR}/CMakeUserPresets.json")
+    message(STATUS "Copied CMakePresets.json to CMakeUserPresets.json in ${ARGUMENT_SOURCE_CMAKE_LIST_DIR}")
 
     ##########################################################################################
     # CMake configure steps

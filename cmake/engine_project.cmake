@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
 
-# Include CMake helpers for package config generation
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
-
 # Include specialized project type cmake files
 include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_base_project.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_static_library_project.cmake)
