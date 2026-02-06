@@ -99,11 +99,18 @@ function(arieo_static_library_project target_project)
             ${default_source_files})
 
     # Set output directories and include paths
-    target_include_directories(
-        ${target_project}
-        PUBLIC 
-            ${ARGUMENT_PUBLIC_INCLUDE_FOLDERS}
-    )
+    # Use generator expressions to handle build vs install include paths
+    if(DEFINED ARGUMENT_PUBLIC_INCLUDE_FOLDERS)
+        foreach(INCLUDE_FOLDER ${ARGUMENT_PUBLIC_INCLUDE_FOLDERS})
+            target_include_directories(
+                ${target_project}
+                PUBLIC 
+                    $<BUILD_INTERFACE:${INCLUDE_FOLDER}>
+                    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+            )
+        endforeach()
+    endif()
+    
     set_target_properties(
         ${target_project}
         PROPERTIES 
@@ -140,5 +147,4 @@ function(arieo_static_library_project target_project)
             )
         endforeach()
     endif()
-
 endfunction()

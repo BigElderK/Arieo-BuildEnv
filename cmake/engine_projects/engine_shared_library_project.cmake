@@ -143,4 +143,10 @@ function(arieo_shared_library_project target_project)
         endforeach()
     endif()
 
+    # ==================== Installation Rules ====================
+    arieo_engine_project_install_configure(${target_project}
+        LIBRARY_TYPE SHARED
+        PUBLIC_INCLUDE_FOLDERS ${ARGUMENT_PUBLIC_INCLUDE_FOLDERS}
+    )
+
 endfunction()

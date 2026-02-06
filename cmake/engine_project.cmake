@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.31)
 
+# Include CMake helpers for package config generation
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 # Include specialized project type cmake files
 include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_base_project.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_static_library_project.cmake)
@@ -12,6 +16,9 @@ include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_plugin_project.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_tool_project.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_test_project.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_bootstrap_project.cmake)
+
+# Include installation configuration function
+include(${CMAKE_CURRENT_LIST_DIR}/engine_project_install_config.cmake)
 
 # Main dispatcher function
 function(arieo_engine_project target_project)
@@ -56,4 +63,9 @@ function(arieo_engine_project target_project)
         message(FATAL_ERROR "Unknown project type: ${ARGUMENT_PROJECT_TYPE}")
     endif()
 
+    arieo_engine_project_install_configure(
+        ${target_project}
+        LIBRARY_TYPE ${ARGUMENT_PROJECT_TYPE}
+        PUBLIC_INCLUDE_FOLDERS ${ARGUMENT_PUBLIC_INCLUDE_FOLDERS}
+    )
 endfunction()
