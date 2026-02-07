@@ -86,22 +86,13 @@ function(arieo_interface_project target_project)
     # Build extra include folders for code generation
     set(extra_include_folders)
     
-    # Add public include folders from linked libraries
-    if(DEFINED ARGUMENT_LIBS)
-        foreach(lib ${ARGUMENT_LIBS})
-            if(TARGET ${lib})
-                get_target_property(lib_includes ${lib} INTERFACE_INCLUDE_DIRECTORIES)
-                if(lib_includes)
-                    list(APPEND extra_include_folders ${lib_includes})
-                endif()
-            endif()
-        endforeach()
-    endif()
-    
     # Add project's own public include folders
     if(DEFINED ARGUMENT_PUBLIC_INCLUDE_FOLDERS)
         list(APPEND extra_include_folders ${ARGUMENT_PUBLIC_INCLUDE_FOLDERS})
     endif()
+
+    # print extra include folders for debugging
+    message(STATUS "Extra include folders for ${target_project}: ${extra_include_folders}")
 
     # Call the interface code generation function
     arieo_generate_interface_code(
