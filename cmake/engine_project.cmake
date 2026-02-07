@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.31)
 
 # Include specialized project type cmake files
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_base_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_static_library_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_shared_library_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_headonly_library_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_interface_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_interface_linker_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_module_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_plugin_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_tool_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_test_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/engine_projects/engine_bootstrap_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_base_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_static_library_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_shared_library_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_headonly_library_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_interface_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_interface_linker_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_module_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_plugin_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_tool_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_test_project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_bootstrap_project.cmake)
 
 # Include installation configuration function
 include(${CMAKE_CURRENT_LIST_DIR}/engine_project_install_config.cmake)
