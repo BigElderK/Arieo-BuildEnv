@@ -16,6 +16,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/projects/engine_bootstrap_project.cmake)
 # Include installation configuration function
 include(${CMAKE_CURRENT_LIST_DIR}/engine_project_install_config.cmake)
 
+include(${CMAKE_CURRENT_LIST_DIR}/package/search_engine_project_packages.cmake)
+
 # Main dispatcher function
 function(arieo_engine_project target_project)
     set(oneValueArgs 
@@ -32,6 +34,13 @@ function(arieo_engine_project target_project)
     
     string(TOLOWER "${ARGUMENT_PROJECT_TYPE}" ARGUMENT_PROJECT_TYPE)
 
+    # add all engine package install folder to prefix
+    add_engine_packages_to_prefix_path(
+        PACKAGES_ROOT $ENV{ARIEO_PACKAGE_ROOT_INSTALL_FOLDER}
+        HOST_PRESET $ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
+        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
+    )
+    
     # Dispatch to specialized function based on project type
     if("${ARGUMENT_PROJECT_TYPE}" STREQUAL "base")
         arieo_base_project(${target_project} ${ARGN})

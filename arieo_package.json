@@ -1,5 +1,5 @@
 {
-    "name": "areio.build_env",
+    "name": "ArieoEngine-BuildEnv",
     "description": "Build environment for Areio projects",
     "install_commands": 
     [

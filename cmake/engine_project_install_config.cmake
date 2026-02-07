@@ -21,6 +21,14 @@ function(arieo_engine_project_install_configure target_project)
         ""
         ${ARGN})
     
+    # Determine package name for config files from ARIEO_CUR_PACKAGE_NAME environment variable
+    if(NOT DEFINED ENV{ARIEO_CUR_PACKAGE_NAME})
+        message(FATAL_ERROR "ARIEO_CUR_PACKAGE_NAME environment variable is not defined")
+    endif()
+    
+    set(package_name "$ENV{ARIEO_CUR_PACKAGE_NAME}")
+    message(STATUS "Using package name from ARIEO_CUR_PACKAGE_NAME: ${package_name}")
+    
     # Get include directories from target properties
     get_target_property(PUBLIC_INCLUDE_DIRS ${target_project} INTERFACE_INCLUDE_DIRECTORIES)
         
@@ -67,21 +75,22 @@ function(arieo_engine_project_install_configure target_project)
     endif()
 
     # Export targets for use by other CMake projects
+    # Use package_name for the export file to match find_package() expectations
     install(EXPORT ${target_project}Targets
-        FILE ${target_project}Targets.cmake
+        FILE ${package_name}Targets.cmake
         NAMESPACE arieo::
         DESTINATION cmake
     )
 
     # Generate and install package configuration file
-    # Use common template and substitute target_project name
+    # Use common template and substitute package_name
     # Note: configure_package_config_file() handles both @variable@ substitution 
     # AND @PACKAGE_...@ path transformations, so we don't need configure_file() first
     set(CONFIG_TEMPLATE_FILE ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/engine_project_install_config.cmake.in)
     
     configure_package_config_file(
         ${CONFIG_TEMPLATE_FILE}
-        ${CMAKE_CURRENT_BINARY_DIR}/${target_project}Config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/${package_name}Config.cmake
         INSTALL_DESTINATION cmake
         PATH_VARS CMAKE_INSTALL_INCLUDEDIR CMAKE_INSTALL_LIBDIR
     )
@@ -94,15 +103,15 @@ function(arieo_engine_project_install_configure target_project)
     endif()
 
     write_basic_package_version_file(
-        ${CMAKE_CURRENT_BINARY_DIR}/${target_project}ConfigVersion.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/${package_name}ConfigVersion.cmake
         VERSION ${PACKAGE_VERSION}
         COMPATIBILITY SameMajorVersion
     )
 
     # Install config files
     install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/${target_project}Config.cmake
-        ${CMAKE_CURRENT_BINARY_DIR}/${target_project}ConfigVersion.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/${package_name}Config.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/${package_name}ConfigVersion.cmake
         DESTINATION cmake
     )
     

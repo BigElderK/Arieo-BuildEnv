@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.20)
 
 #[[
-Function: add_arieo_packages_to_prefix_path
+Function: add_engine_packages_to_prefix_path
 
 Scans the ArieoEngine packages install directory and adds all package cmake 
 directories to CMAKE_PREFIX_PATH, allowing find_package() to locate them.
 
 Usage:
   # Add all packages for current platform/config
-  add_arieo_packages_to_prefix_path()
+  add_engine_packages_to_prefix_path()
   
   # Then use packages normally
   find_package(arieo_core REQUIRED)
@@ -24,7 +24,7 @@ Alternative Parameters (if env vars not set):
   HOST_PRESET    - Override platform
   BUILD_TYPE     - Override build configuration
 ]]
-function(add_arieo_packages_to_prefix_path)
+function(add_engine_packages_to_prefix_path)
     set(oneValueArgs
         PACKAGES_ROOT
         HOST_PRESET
@@ -113,10 +113,21 @@ function(add_arieo_packages_to_prefix_path)
     # Add to CMAKE_PREFIX_PATH
     if(PACKAGE_PATHS)
         list(APPEND CMAKE_PREFIX_PATH ${PACKAGE_PATHS})
-        # Make it visible to parent scope
+        # Make it visible to parent scope AND current scope
         set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} PARENT_SCOPE)
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE INTERNAL "Package search paths" FORCE)
+        # Return PACKAGE_PATHS to parent scope for use in cmake -D arguments
+        set(ARIEO_PACKAGES_PREFIX_PATH "${PACKAGE_PATHS}" PARENT_SCOPE)
         list(LENGTH PACKAGE_PATHS NUM_PACKAGES)
         message(STATUS "Added ${NUM_PACKAGES} packages to CMAKE_PREFIX_PATH")
+        message(STATUS "CMAKE_PREFIX_PATH is now: ${CMAKE_PREFIX_PATH}")
+        
+        # Debug: Check if arieo_core config exists
+        foreach(PKG_PATH ${PACKAGE_PATHS})
+            if(EXISTS "${PKG_PATH}/cmake/arieo_coreConfig.cmake")
+                message(STATUS "  ✓ Found arieo_coreConfig.cmake at: ${PKG_PATH}/cmake/")
+            endif()
+        endforeach()
     else()
         message(WARNING "No packages found in ${PACKAGES_ROOT}")
     endif()

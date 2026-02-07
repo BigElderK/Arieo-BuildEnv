@@ -238,12 +238,6 @@ if(CMAKE_SCRIPT_MODE_FILE)
     if(NOT DEFINED ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER})
          message(FATAL_ERROR "Environment variable ARIEO_CUR_PACKAGE_BUILD_FOLDER is not defined")
     endif()
-    
-    add_arieo_packages_to_prefix_path(
-        PACKAGES_ROOT $ENV{ARIEO_PACKAGE_ROOT_INSTALL_FOLDER}
-        HOST_PRESET $ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
-        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
-    )
 
     # Call the function
     build_cmake_project_package(
