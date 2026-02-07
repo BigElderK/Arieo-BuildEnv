@@ -78,15 +78,18 @@ function(arieo_engine_project_install_configure target_project)
     # Use package_name for the export file to match find_package() expectations
     install(EXPORT ${target_project}Targets
         FILE ${package_name}Targets.cmake
-        NAMESPACE arieo::
+        NAMESPACE ${package_name}::
         DESTINATION cmake
     )
 
     # Generate and install package configuration file
-    # Use common template and substitute package_name
+    # Use common template and substitute package_name and target_project
     # Note: configure_package_config_file() handles both @variable@ substitution 
     # AND @PACKAGE_...@ path transformations, so we don't need configure_file() first
     set(CONFIG_TEMPLATE_FILE ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/engine_project_install_config.cmake.in)
+    
+    # Set variable for template substitution
+    set(target_project_name ${target_project})
     
     configure_package_config_file(
         ${CONFIG_TEMPLATE_FILE}
