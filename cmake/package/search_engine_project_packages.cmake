@@ -123,10 +123,3 @@ function(add_arieo_packages_to_prefix_path)
     
     message(STATUS "================================================================")
 endfunction()
-
-#[[
-Simple usage: Just call this to automatically load all packages
-]]
-macro(arieo_find_all_packages)
-    add_arieo_packages_to_prefix_path()
-endmacro()

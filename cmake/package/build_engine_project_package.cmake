@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
+include(${CMAKE_CURRENT_LIST_DIR}/search_engine_project_packages.cmake)
 #[[
 Function: build_cmake_project_package
 
@@ -238,9 +239,12 @@ if(CMAKE_SCRIPT_MODE_FILE)
          message(FATAL_ERROR "Environment variable ARIEO_CUR_PACKAGE_BUILD_FOLDER is not defined")
     endif()
     
-    # Calculate output folder
-    set(OUTPUT_FOLDER_VAR "$ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}")
-    
+    add_arieo_packages_to_prefix_path(
+        PACKAGES_ROOT $ENV{ARIEO_PACKAGE_ROOT_INSTALL_FOLDER}
+        HOST_PRESET $ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
+        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
+    )
+
     # Call the function
     build_cmake_project_package(
         SOURCE_CMAKE_LIST_DIR $ENV{ARIEO_CUR_PACKAGE_SOURCE_FOLDER}
