@@ -106,38 +106,23 @@ endfunction()
 ##########################################################################################
 # Script execution: When called with cmake -P, read all parameters from environment variables
 if(CMAKE_SCRIPT_MODE_FILE)
-    # Get SOURCE_CMAKE_LIST_DIR from environment variable (set by Python build script)
-    if(NOT DEFINED ENV{ARIEO_PACKAGE_SOURCE_DIR})
-        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_SOURCE_DIR is not defined")
-    endif()
-    
     # Read parameters from environment variables
-    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET})
-        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILDENV_HOST_PRESET is not defined")
+    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET})
+        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET is not defined")
     endif()
     
-    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE})
-        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE is not defined")
+    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE})
+        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE is not defined")
     endif()
 
-    if(NOT DEFINED ENV{ARIEO_PACKAGE_CORE_BUILD_FOLDER} AND NOT DEFINED ENV{ARIEO_PACKAGE_CORE_INSTALL_FOLDER})
-        message(FATAL_ERROR "Neither ARIEO_PACKAGE_CORE_BUILD_FOLDER nor ARIEO_PACKAGE_CORE_INSTALL_FOLDER environment variables are defined. At least one must be defined.")
-    endif()
-    
-    # Determine build and install folders based on package name pattern
-    if(DEFINED ENV{ARIEO_PACKAGE_CORE_BUILD_FOLDER})
-        set(BUILD_FOLDER_VAR $ENV{ARIEO_PACKAGE_CORE_BUILD_FOLDER})
-    elseif(DEFINED BUILD_FOLDER)
-        set(BUILD_FOLDER_VAR ${BUILD_FOLDER})
-    else()
-        message(FATAL_ERROR "BUILD_FOLDER must be defined via -DBUILD_FOLDER or ARIEO_PACKAGE_*_BUILD_FOLDER environment variable")
+    if(NOT DEFINED ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER} AND NOT DEFINED ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER})
+        message(FATAL_ERROR "Neither ARIEO_CUR_PACKAGE_BUILD_FOLDER nor ARIEO_CUR_PACKAGE_INSTALL_FOLDER environment variables are defined. At least one must be defined.")
     endif()
 
     # Call the function
     install_cmake_project_package(
-        BUILD_FOLDER $ENV{ARIEO_PACKAGE_CORE_BUILD_FOLDER}
-        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE}
-        INSTALL_PREFIX $ENV{ARIEO_PACKAGE_CORE_INSTALL_FOLDER}/$ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE}
+        BUILD_FOLDER $ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
+        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
+        INSTALL_PREFIX $ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
     )
 endif()
-

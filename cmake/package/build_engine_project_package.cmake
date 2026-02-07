@@ -219,38 +219,34 @@ endfunction()
 # Script execution: When called with cmake -P, read all parameters from environment variables
 if(CMAKE_SCRIPT_MODE_FILE)
     # Get SOURCE_CMAKE_LIST_DIR from environment variable (set by Python build script)
-    if(NOT DEFINED ENV{ARIEO_PACKAGE_SOURCE_DIR})
-        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_SOURCE_DIR is not defined")
+    if(NOT DEFINED ENV{ARIEO_CUR_PACKAGE_SOURCE_FOLDER})
+        message(FATAL_ERROR "Environment variable ARIEO_CUR_PACKAGE_SOURCE_FOLDER is not defined")
     endif()
     
     # Read other parameters from environment variables
-    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET})
-        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILDENV_HOST_PRESET is not defined")
+    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET})
+        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET is not defined")
     endif()
     
-    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE})
-        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE is not defined")
+    if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE})
+        message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE is not defined")
     endif()
     
     # Determine build folder based on package name pattern
-    # Try to detect package name from common environment variable patterns
-    if(DEFINED ENV{ARIEO_PACKAGE_CORE_BUILD_FOLDER})
-        set(BUILD_FOLDER_VAR $ENV{ARIEO_PACKAGE_CORE_BUILD_FOLDER})
-    elseif(DEFINED BUILD_FOLDER)
-        set(BUILD_FOLDER_VAR ${BUILD_FOLDER})
-    else()
-        message(FATAL_ERROR "BUILD_FOLDER must be defined via -DBUILD_FOLDER or ARIEO_PACKAGE_*_BUILD_FOLDER environment variable")
+    # ARIEO_CUR_PACKAGE_BUILD_FOLDER is set for each package during build process
+    if(NOT DEFINED ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER})
+         message(FATAL_ERROR "Environment variable ARIEO_CUR_PACKAGE_BUILD_FOLDER is not defined")
     endif()
     
     # Calculate output folder
-    set(OUTPUT_FOLDER_VAR "${BUILD_FOLDER_VAR}/$ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE}")
+    set(OUTPUT_FOLDER_VAR "$ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}")
     
     # Call the function
     build_cmake_project_package(
-        SOURCE_CMAKE_LIST_DIR $ENV{ARIEO_PACKAGE_SOURCE_DIR}
-        PRESET $ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
-        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILDENV_HOST_BUILD_TYPE}
-        BUILD_FOLDER ${BUILD_FOLDER_VAR}
-        OUTPUT_FOLDER ${OUTPUT_FOLDER_VAR}
+        SOURCE_CMAKE_LIST_DIR $ENV{ARIEO_CUR_PACKAGE_SOURCE_FOLDER}
+        PRESET $ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
+        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
+        BUILD_FOLDER $ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
+        OUTPUT_FOLDER $ENV{ARIEO_CUR_PACKAGE_BUILD_FOLDER}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}/$ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}/output
     )
 endif()

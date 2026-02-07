@@ -1,32 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
 
-# INSTALL_FOLDER must be set from command line or environment variable
-if(NOT DEFINED INSTALL_FOLDER)
-    # Try to get from environment variable
-    if(DEFINED ENV{INSTALL_FOLDER})
-        set(INSTALL_FOLDER "$ENV{INSTALL_FOLDER}")
-        message(STATUS "Using INSTALL_FOLDER from environment: ${INSTALL_FOLDER}")
-    else()
-        message(FATAL_ERROR "INSTALL_FOLDER is not defined. Please specify it with -DINSTALL_FOLDER=<path> or set INSTALL_FOLDER environment variable")
-    endif()
-else()
-    message(STATUS "Using INSTALL_FOLDER from command line: ${INSTALL_FOLDER}")
-endif()
-
-# Check if ARIEO_PACKAGE_BUILDENV_HOST_PRESET is defined
-if(NOT DEFINED ARIEO_PACKAGE_BUILDENV_HOST_PRESET)
-    # Try to get from environment variable
-    if(DEFINED ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET})
-        set(ARIEO_PACKAGE_BUILDENV_HOST_PRESET "$ENV{ARIEO_PACKAGE_BUILDENV_HOST_PRESET}")
-        message(STATUS "Using ARIEO_PACKAGE_BUILDENV_HOST_PRESET from environment: ${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}")
-    else()
-        message(FATAL_ERROR "ARIEO_PACKAGE_BUILDENV_HOST_PRESET is not defined. Please specify it with -DARIEO_PACKAGE_BUILDENV_HOST_PRESET=<preset> or set ARIEO_PACKAGE_BUILDENV_HOST_PRESET environment variable")
-    endif()
-else()
-    message(STATUS "Using ARIEO_PACKAGE_BUILDENV_HOST_PRESET from command line: ${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}")
-endif()
-
-
 function(generate_conan_toolchain_profile)
     set(oneValueArgs
         CONAN_PROFILE_FILE
@@ -90,34 +63,38 @@ function(generate_conan_toolchain_profile)
     file(COPY ${ARGUMENT_CONAN_PROFILE_FILE} DESTINATION ${ARGUMENT_INSTALL_FOLDER})
 endfunction()
 
+# Check if ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET is defined in environment
+if(NOT DEFINED ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET})
+    message(FATAL_ERROR "Environment variable ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET is not defined")
+endif()
 
-if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "android.armv8")
+if ($ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET} STREQUAL "android.armv8")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.android.armv8.txt
-        INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        INSTALL_FOLDER $ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/conan/host/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
     )
 endif()
 
-if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "raspberry.armv8")
+if ($ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET} STREQUAL "raspberry.armv8")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.raspberry.armv8.txt
-        INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        INSTALL_FOLDER $ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/conan/host/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
     )
 endif()
 
-if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "ubuntu.x86_64")
+if ($ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET} STREQUAL "ubuntu.x86_64")
     generate_conan_toolchain_profile(
         CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.ubuntu.x86_64.txt
-        INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+        INSTALL_FOLDER $ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/conan/host/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
     )
 endif()
 
 # Add host profiles only for windows platform
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "windows.x86_64")
+    if ($ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET} STREQUAL "windows.x86_64")
         generate_conan_toolchain_profile(
             CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt
-            INSTALL_FOLDER ${INSTALL_FOLDER}/conan/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+            INSTALL_FOLDER $ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/conan/host/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
         )
     endif()
 else()
@@ -126,10 +103,10 @@ endif()
 
 # Add host profiles only for darwin platform
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-    if (ARIEO_PACKAGE_BUILDENV_HOST_PRESET STREQUAL "macos.arm64")
+    if ($ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET} STREQUAL "macos.arm64")
         generate_conan_toolchain_profile(
             CONAN_PROFILE_FILE ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.macos.arm64.txt
-            INSTALL_FOLDER ${INSTALL_FOLDER}/host/${ARIEO_PACKAGE_BUILDENV_HOST_PRESET}
+            INSTALL_FOLDER $ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/host/$ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
         )
     endif()
 else()
@@ -138,8 +115,8 @@ endif()
 
 ##########################################################################################
 # Create a stub cmake file in INSTALL_FOLDER that includes BuildEnv cmake
-file(MAKE_DIRECTORY "${INSTALL_FOLDER}/cmake")
-file(WRITE "${INSTALL_FOLDER}/cmake/build_environment.cmake"
+file(MAKE_DIRECTORY "$ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/cmake")
+file(WRITE "$ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/cmake/build_environment.cmake"
 "include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/engine_project.cmake\")\n"
 "include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/install_engine_project.cmake\")\n"
 "include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/build_engine_project.cmake\")\n"
@@ -149,7 +126,7 @@ file(WRITE "${INSTALL_FOLDER}/cmake/build_environment.cmake"
 
 ##########################################################################################
 # Generate CMakeUserPresets.json in source directory with resolved paths
-file(WRITE "${INSTALL_FOLDER}/cmake/CMakePresets.json"
+file(WRITE "$ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/cmake/CMakePresets.json"
 "{
     \"version\": 4,
     \"cmakeMinimumRequired\": {
@@ -172,7 +149,7 @@ message(STATUS "Generated CMakeUserPresets.json in ${ARGUMENT_SOURCE_CMAKE_LIST_
 
 ##########################################################################################
 # Generate wrapper file for build_engine_project_package.cmake
-file(WRITE "${INSTALL_FOLDER}/cmake/package/build_engine_project_package.cmake"
+file(WRITE "$ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/cmake/package/build_engine_project_package.cmake"
 "cmake_minimum_required(VERSION 3.20)\n"
 "\n"
 "# Include the build package function\n"
@@ -182,7 +159,7 @@ message(STATUS "Generated build_engine_project_package.cmake wrapper")
 
 ##########################################################################################
 # Generate wrapper file for install_engine_project_package.cmake
-file(WRITE "${INSTALL_FOLDER}/cmake/package/install_engine_project_package.cmake"
+file(WRITE "$ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/cmake/package/install_engine_project_package.cmake"
 "cmake_minimum_required(VERSION 3.20)\n"
 "\n"
 "# Include the install package function\n"
