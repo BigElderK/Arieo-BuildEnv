@@ -1,0 +1,106 @@
+{
+  "root_namespace": "{{root_namespace}}",
+  "package_name": "{{package_name}}",
+  "kind": "{{kind}}",
+  "namespace": "{{name}}",
+  "isNested": {{isNested}},
+  "wit_package_name": "{{wit_package_name}}",
+  "witgen_cxx_namespace_fullname": "{{witgen_cxx_namespace_fullname}}",
+  "witgen_dotnet_namespace_fullname": "{{witgen_dotnet_namespace_fullname}}",
+  "witgen_rust_namespace_fullname": "{{witgen_rust_namespace_fullname}}",
+  "wasm_cxx_namespace_fullname": "{{root_namespace}}",
+  "wasm_cxx_namespace_name": "{{root_namespace_last}}",
+  "wasm_dotnet_script_namespace_fullname": "{{root_namespace_dotnet}}",
+  "wasm_dotnet_script_namespace_name": "{{root_namespace_dotnet_last}}",
+  "wasm_rust_namespace_fullname": "{{root_namespace_rust}}",
+  "wasm_rust_namespace_name": "{{root_namespace_rust_last}}",
+  "interfaces": [
+    {{#inner}}
+    {{#completeDefinition}}
+    {{^isImplicit}}
+    {
+      "name": "{{name}}",
+      "full_qualified_name": "{{full_qualified_name}}",
+      "wit_interface_name": "{{wit_interface_name}}",
+      "wit_interface_fullname": "{{wit_interface_fullname}}",
+      "witgen_cxx_interface_fullname": "{{witgen_cxx_interface_fullname}}",
+      "witgen_csharp_interface_fullname": "{{witgen_csharp_interface_fullname}}",
+      "witgen_rust_interface_fullname": "{{witgen_rust_interface_fullname}}",
+      "wasm_cxx_interface_fullname": "{{wasm_cxx_interface_fullname}}",
+      "wasm_cxx_interface_name": "{{wasm_cxx_interface_name}}",
+      "wasm_csharp_interface_name": "{{wasm_csharp_interface_name}}",
+      "wasm_rust_interface_fullname": "{{wasm_rust_interface_fullname}}",
+      "wasm_rust_interface_name": "{{wasm_rust_interface_name}}",
+      "interface_name_hash": {{interface_name_hash}},
+      "interface_id": {{interface_id}},
+      "interface_checksum": {{interface_checksum}},
+      "isAbstract": {{definitionData.isAbstract}},
+      "isPolymorphic": {{definitionData.isPolymorphic}},
+      "location": {
+        "file": "{{loc.file}}",
+        "line": {{loc.line}},
+        "column": {{loc.col}}
+      },
+      "annotations": [{{#inner}}{{#annotation}}
+        "{{annotation}}"{{^last}},{{/last}}{{/annotation}}{{/inner}}
+      ],
+      "methods": [
+        {{#inner}}
+        {{#mangledName}}
+        {{^isImplicit}}
+        {
+          "name": "{{name}}",
+          "wit_function_name": "{{wit_function_name}}",
+          "witgen_cxx_function_name": "{{witgen_cxx_function_name}}",
+          "witgen_cxx_function_fullname": "{{witgen_cxx_function_fullname}}",
+          "witgen_csharp_function_name": "{{witgen_csharp_function_name}}",
+          "witgen_csharp_function_fullname": "{{witgen_csharp_function_fullname}}",
+          "witgen_rust_function_name": "{{witgen_rust_function_name}}",
+          "witgen_rust_function_fullname": "{{witgen_rust_function_fullname}}",
+          "wasm_cxx_function_name": "{{wasm_cxx_function_name}}",
+          "wasm_cxx_function_fullname": "{{wasm_cxx_function_fullname}}",
+          "wasm_csharp_function_name": "{{wasm_csharp_function_name}}",
+          "wasm_csharp_function_fullname": "{{wasm_csharp_function_fullname}}",
+          "wasm_rust_function_name": "{{wasm_rust_function_name}}",
+          "wasm_rust_function_fullname": "{{wasm_rust_function_fullname}}",
+          "function_name_hash": {{function_name_hash}},
+          "function_id": {{function_id}},
+          "function_checksum": {{function_checksum}},
+          "mangledName": "{{mangledName}}",
+          "returnType": "{{returnType}}",
+          "native_return_type": "{{native_return_type}}",
+          "csharp_return_type": "{{csharp_return_type}}",
+          "rust_return_type": "{{rust_return_type}}",
+          "isVirtual": {{virtual}},
+          "isPure": {{pure}},
+          "location": {
+            "line": {{loc.line}},
+            "column": {{loc.col}}
+          },
+          "parameters": [
+            {{#parameters}}
+            {
+              "name": "{{name}}",
+              "native_type": "{{native_type}}",
+              "csharp_type": "{{csharp_type}}",
+              "rust_type": "{{rust_type}}",
+              "desugaredType": "{{desugaredType}}",
+              "first": {{first}},
+              "last": {{last}}
+            }{{^last}},{{/last}}
+            {{/parameters}}
+          ],
+          "annotations": [{{#inner}}{{#annotation}}
+            "{{annotation}}"{{^last}},{{/last}}{{/annotation}}{{/inner}}
+          ]
+        }{{^last}},{{/last}}
+        {{/isImplicit}}
+        {{/mangledName}}
+        {{/inner}}
+      ]
+    }{{^last}},{{/last}}
+    {{/isImplicit}}
+    {{/completeDefinition}}
+    {{/inner}}
+  ]
+}

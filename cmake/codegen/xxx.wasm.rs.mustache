@@ -1,0 +1,30 @@
+// This file is auto-generated. Do not edit manually.
+// Generated from xxx.wasm.rs.mustache template.
+// WASM Rust wrapper for interface: {{package_name}}
+
+pub mod interface {
+    pub mod {{wasm_rust_namespace_name}} {
+{{#interfaces}}        
+        pub struct {{wasm_rust_interface_name}} {
+            m_handle: u64,
+        }
+
+        impl {{wasm_rust_interface_name}} {
+            pub const INTERFACE_ID: u64 = {{interface_id}}u64;
+            pub const INTERFACE_CHECKSUM: u64 = {{interface_checksum}}u64;
+{{#methods}}
+            pub fn {{wasm_rust_function_name}}(&self{{#parameters}}, {{name}}: {{rust_type}}{{/parameters}}) -> {{rust_return_type}} {
+                {{witgen_rust_function_fullname}}(self.m_handle{{#parameters}}, {{name}}{{/parameters}})
+            }
+
+{{/methods}}
+        }
+
+        impl From<u64> for {{wasm_rust_interface_name}} {
+            fn from(handle: u64) -> Self {
+                {{wasm_rust_interface_name}} { m_handle: handle }
+            }
+        }
+{{/interfaces}}
+    }
+}

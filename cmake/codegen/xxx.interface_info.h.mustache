@@ -1,0 +1,79 @@
+// This file is auto-generated. Do not edit manually.
+// Generated from xxx.interface_info.h.mustache template.
+
+#include <cstdint>
+#include "base/interface/interface.h"
+namespace Arieo::Base
+{
+    template<typename T>
+    class InterfaceInfo;
+
+{{#interfaces}}
+    template<>
+    class InterfaceInfo<{{full_qualified_name}}>
+    {
+    public:
+        using TInterface = {{full_qualified_name}};
+        static constexpr const char* getPackageName()
+        {
+            return "{{package_name}}";
+        }
+
+        static constexpr const char* getInterfaceName()
+        {
+            return "{{name}}";
+        }
+
+        static constexpr const char* getWitInterfaceName()
+        {
+            return "{{wit_interface_name}}";
+        }
+
+        static constexpr const char* getWitFullInterfaceName()
+        {
+            return "{{wit_interface_fullname}}";
+        }
+
+        static constexpr const char* getCxxScriptFullInterfaceName()
+        {
+            return "{{wasm_cxx_interface_fullname}}";
+        }
+
+        static constexpr std::uint64_t getInterfaceNameHash()
+        {
+            return {{interface_name_hash}}ULL;
+        }
+
+        static constexpr std::uint64_t getInterfaceId()
+        {
+            return {{interface_id}}ULL;
+        }
+
+        static constexpr std::uint64_t getInterfaceChecksum()
+        {
+            return {{interface_checksum}}ULL;
+        }
+
+        static constexpr std::uint32_t getMemberFunctionCount()
+        {
+            constexpr std::uint32_t count = 0
+{{#methods}}
+            +1
+{{/methods}}
+            ;
+            return count;
+        }
+
+        // Iterator for member functions - accepts a callback that processes each function pointer
+        template<typename Callback>
+        static void iteratorMemberFunctions(Callback&& callback)
+        {
+            // Call callback for each member function using fold expression
+{{#methods}}
+            callback(&TInterface::{{name}}, "{{name}}", "{{wit_function_name}}", {{function_id}}ULL, {{function_checksum}}ULL);
+{{/methods}}
+        }
+    };
+
+{{/interfaces}}
+}

@@ -1,0 +1,33 @@
+// This file is auto-generated. Do not edit manually.
+// Generated from xxx.wasm.h.mustache template.
+// WASM C++ wrapper for interface: {{package_name}}
+
+#pragma once
+
+#include <cstdint>
+
+namespace {{root_namespace}}
+{
+{{#interfaces}}
+    class {{name}}
+    {
+    protected:
+        std::uint64_t m_handle;
+
+    public:
+        static constexpr std::uint64_t m_interface_id = {{interface_id}}ULL;
+        static constexpr std::uint64_t m_interface_checksum = {{interface_checksum}}ULL;
+
+        {{name}}(std::uint64_t handle) : m_handle(handle) {}
+
+{{#methods}}
+        {{native_return_type}} {{name}}({{#parameters}}{{native_type}} {{name}}{{#last}}{{/last}}{{^last}}, {{/last}}{{/parameters}})
+        {
+            return {{witgen_cxx_function_fullname}}(m_handle{{#parameters}}, {{name}}{{/parameters}});
+        }
+
+{{/methods}}
+    };
+
+{{/interfaces}}
+}

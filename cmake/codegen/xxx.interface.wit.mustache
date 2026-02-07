@@ -1,0 +1,14 @@
+// This file is auto-generated. Do not edit manually.
+// Generated from arieo_xxx.wit mustache template.
+
+package {{package_name}};
+
+{{#interfaces}}
+interface {{wit_interface_name}}
+{
+{{#methods}}
+    {{wit_function_name}}: func(handle: u64{{#parameters}}, {{name}}: s32{{/parameters}}) -> s32;
+{{/methods}}
+}
+
+{{/interfaces}}

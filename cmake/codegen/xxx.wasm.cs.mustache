@@ -1,0 +1,30 @@
+// This file is auto-generated. Do not edit manually.
+// Generated from xxx.wasm.cs.mustache template.
+// WASM C# wrapper for interface: {{package_name}}
+
+
+{{#interfaces}}
+namespace {{wasm_dotnet_script_namespace_fullname}}
+{
+    class {{name}}
+    {
+        public const ulong INTERFACE_ID = {{interface_id}}UL;
+        public const ulong INTERFACE_CHECKSUM = {{interface_checksum}}UL;
+        
+        private readonly ulong m_handle;
+
+        public {{name}}(ulong handle)
+        {
+            m_handle = handle;
+        }
+
+{{#methods}}
+        public {{csharp_return_type}} {{name}}({{#parameters}}{{csharp_type}} {{name}}{{#last}}{{/last}}{{^last}}, {{/last}}{{/parameters}})
+        {
+            return {{witgen_csharp_function_fullname}}(m_handle{{#parameters}}, {{name}}{{/parameters}});
+        }
+
+{{/methods}}
+    }
+}
+{{/interfaces}}

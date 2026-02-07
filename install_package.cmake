@@ -117,10 +117,7 @@ endif()
 # Create a stub cmake file in INSTALL_FOLDER that includes BuildEnv cmake
 file(MAKE_DIRECTORY "$ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/cmake")
 file(WRITE "$ENV{ARIEO_CUR_PACKAGE_INSTALL_FOLDER}/cmake/build_environment.cmake"
-"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/engine_project.cmake\")\n"
-"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/package/search_engine_project_packages.cmake\")\n"
-"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/package/build_engine_project_package.cmake\")\n"
-"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/package/install_engine_project_package.cmake\")\n"
+"include(\"${CMAKE_CURRENT_LIST_DIR}/cmake/build_environment.cmake\")\n"
 )
 
 ##########################################################################################
