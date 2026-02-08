@@ -55,13 +55,6 @@ function(arieo_engine_project target_project)
     
     string(TOLOWER "${ARGUMENT_PROJECT_TYPE}" ARGUMENT_PROJECT_TYPE)
 
-    # add all engine package install folder to prefix
-    add_engine_packages_to_prefix_path(
-        PACKAGES_ROOT $ENV{ARIEO_PACKAGE_ROOT_INSTALL_FOLDER}
-        HOST_PRESET $ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
-        BUILD_TYPE $ENV{ARIEO_PACKAGE_BUILD_SETTING_BUILD_TYPE}
-    )
-    
     # Check Environment CONAN_BUILD_ENV_CHECK is true
     if(NOT DEFINED ENV{CONAN_BUILD_ENV_CHECK} OR NOT "$ENV{CONAN_BUILD_ENV_CHECK}" STREQUAL "true")
         message(FATAL_ERROR "Conan build environment not set up. Please make sure to run CMake with the appropriate Conan build environment setup.")
@@ -84,13 +77,19 @@ function(arieo_engine_project target_project)
     # make find_package use config first
     set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 
-    # Map to use release version for all third_parties packages
-    # set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE)
-    # set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG RELEASE)
+    # Map Debug/RelWithDebInfo to use Release version for all third_parties packages
+    set(CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO RELEASE)
+    set(CMAKE_MAP_IMPORTED_CONFIG_DEBUG RELEASE)
 
     # Force set msvc crt as MD
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
     message(STATUS "Arieo MSVC CRT LIB: ${CMAKE_MSVC_RUNTIME_LIBRARY}")
+
+    # add all engine package install folder to prefix
+    add_engine_packages_to_prefix_path(
+        PACKAGES_ROOT $ENV{ARIEO_PACKAGE_ROOT_INSTALL_FOLDER}
+        HOST_PRESET $ENV{ARIEO_PACKAGE_BUILD_SETTING_HOST_PRESET}
+    )
 
     # Dispatch to specialized function based on project type
     if("${ARGUMENT_PROJECT_TYPE}" STREQUAL "base")

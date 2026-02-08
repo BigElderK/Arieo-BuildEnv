@@ -39,11 +39,12 @@ function(arieo_engine_project_install_configure target_project)
     # Install the library target
     # Note: INCLUDES DESTINATION only sets metadata (tells consumers where to look for headers)
     #       It does NOT copy any files - we need separate install(DIRECTORY) commands below
+    # Libraries are installed to build-type subdirectories to support multi-config installs
     install(TARGETS ${target_project}
         EXPORT ${target_project}Targets
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/$<CONFIG>
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/$<CONFIG>
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/$<CONFIG>
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
