@@ -10,12 +10,25 @@ function(arieo_engine_project_install_configure target_project)
     include(GNUInstallDirs)
     include(CMakePackageConfigHelpers)
     
-    set(oneValueArgs
-        LIBRARY_TYPE  # STATIC, SHARED, or empty for header-only
+    set(oneValueArgs 
+        ALIAS
+        PROJECT_TYPE
     )
-    
+
     set(multiValueArgs
-        PACKAGES  # List of required packages that consumers need to find
+        PACKAGES
+        PUBLIC_INCLUDE_FOLDERS
+        INTERFACES
+        PUBLIC_LIBS
+        EXTERNAL_LIBS
+    )
+
+    cmake_parse_arguments(
+        ARGUMENT
+        ""
+        "${oneValueArgs}"
+        "${multiValueArgs}"
+        ${ARGN}
     )
     
     cmake_parse_arguments(

@@ -23,35 +23,15 @@ function(arieo_engine_project target_project)
     set(oneValueArgs 
         ALIAS
         PROJECT_TYPE
-        MODULE_CONFIG_FILE
-        AST_GENERATE_FOLDER
-        NATIVE_CODE_GENERATE_FOLDER
-        WASM_WIT_GENERATE_FOLDER
-        WASM_CXX_SCRIPT_GENERATE_FOLDER
-        WASM_CSHARP_SCRIPT_GENERATE_FOLDER
-        WASM_RUST_SCRIPT_GENERATE_FOLDER
-        SCRIPT_PACKAGE_NAME
-        ROOT_NAMESPACE
-    )
-
-    set(multiValueArgs
-        PACKAGES
-        PUBLIC_INCLUDE_FOLDERS
-        SOURCES
-        PRIVATE_INCLUDE_FOLDERS
-        PRIVATE_LIB_FOLDERS
-        INTERFACES
-        PUBLIC_LIBS
-        PRIVATE_LIBS
-        EXTERNAL_LIBS
     )
 
     cmake_parse_arguments(
         ARGUMENT
         ""
         "${oneValueArgs}"
-        "${multiValueArgs}"
-        ${ARGN})
+        ""
+        ${ARGN}
+    )
     
     string(TOLOWER "${ARGUMENT_PROJECT_TYPE}" ARGUMENT_PROJECT_TYPE)
 
@@ -124,7 +104,6 @@ function(arieo_engine_project target_project)
 
     arieo_engine_project_install_configure(
         ${target_project}
-        LIBRARY_TYPE ${ARGUMENT_PROJECT_TYPE}
-        PACKAGES ${ARGUMENT_PACKAGES}
+        ${ARGN}
     )
 endfunction()
