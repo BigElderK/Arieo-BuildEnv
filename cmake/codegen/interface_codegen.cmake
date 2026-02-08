@@ -129,6 +129,7 @@ function(arieo_generate_interface_code target_project)
             COMMAND ${CMAKE_COMMAND} -E echo "Generating AST for ${header_basename}.h..."
             COMMAND python "${PYTHON_SCRIPT}" "${CLANG_EXECUTABLE}" "${header_file}" "${output_json}" "${ARGUMENT_ROOT_NAMESPACE}" "${ARGUMENT_SCRIPT_PACKAGE_NAME}" ${python_includes}
             COMMAND ${CMAKE_COMMAND} -E echo "Successfully generated ${output_json}"
+            COMMAND_ERROR_IS_FATAL ANY
             DEPENDS ${header_file} "${PYTHON_SCRIPT}"
             COMMENT "Generating ${header_basename}.ast.json with annotations from ${header_basename}.h"
         )
@@ -147,6 +148,7 @@ function(arieo_generate_interface_code target_project)
             COMMAND ${CMAKE_COMMAND} -E echo "Generating interface JSON for ${header_basename}..."
             COMMAND ${MUSTACHE_EXECUTABLE} "${output_json}" "${GENERATE_INTERFACE_MUSTACHE_TEMPLATE}" > "${interface_ast_json}"
             COMMAND ${CMAKE_COMMAND} -E echo "Successfully generated ${interface_ast_json}"
+            COMMAND_ERROR_IS_FATAL ANY
             DEPENDS ${output_json} "${GENERATE_INTERFACE_MUSTACHE_TEMPLATE}"
             COMMENT "Generating ${header_basename}.interface.json from AST using mustache template"
         )
@@ -171,6 +173,7 @@ function(arieo_generate_interface_code target_project)
                 COMMAND ${CMAKE_COMMAND} -E echo "Generating interface_info.h for ${header_basename}..."
                 COMMAND ${MUSTACHE_EXECUTABLE} "${interface_ast_json}" "${GENERATE_INTERFACE_INFO_H_MUSTACHE_TEMPLATE}" > "${interface_info_h}"
                 COMMAND ${CMAKE_COMMAND} -E echo "Successfully generated ${interface_info_h}"
+                COMMAND_ERROR_IS_FATAL ANY
                 DEPENDS ${interface_ast_json} "${GENERATE_INTERFACE_INFO_H_MUSTACHE_TEMPLATE}"
                 COMMENT "Generating ${header_basename}.interface_info.h from interface JSON using mustache template"
             )
@@ -191,6 +194,7 @@ function(arieo_generate_interface_code target_project)
                 COMMAND ${CMAKE_COMMAND} -E echo "Generating WIT interface for ${header_basename}..."
                 COMMAND ${MUSTACHE_EXECUTABLE} "${interface_ast_json}" "${GENERATE_INTERFACE_WIT_MUSTACHE_TEMPLATE}" > "${interface_wit}"
                 COMMAND ${CMAKE_COMMAND} -E echo "Successfully generated ${interface_wit}"
+                COMMAND_ERROR_IS_FATAL ANY
                 DEPENDS ${interface_ast_json} "${GENERATE_INTERFACE_WIT_MUSTACHE_TEMPLATE}"
                 COMMENT "Generating ${header_basename}.interface.wit from interface JSON using mustache template"
             )
@@ -211,6 +215,7 @@ function(arieo_generate_interface_code target_project)
                 COMMAND ${CMAKE_COMMAND} -E echo "Generating C++ WASM wrapper for ${header_basename}..."
                 COMMAND ${MUSTACHE_EXECUTABLE} "${interface_ast_json}" "${GENERATE_WASM_H_MUSTACHE_TEMPLATE}" > "${wasm_cxx_h}"
                 COMMAND ${CMAKE_COMMAND} -E echo "Successfully generated ${wasm_cxx_h}"
+                COMMAND_ERROR_IS_FATAL ANY
                 DEPENDS ${interface_ast_json} "${GENERATE_WASM_H_MUSTACHE_TEMPLATE}"
                 COMMENT "Generating ${header_basename}.wasm.h from interface JSON using mustache template"
             )
@@ -231,6 +236,7 @@ function(arieo_generate_interface_code target_project)
                 COMMAND ${CMAKE_COMMAND} -E echo "Generating C# WASM wrapper for ${header_basename}..."
                 COMMAND ${MUSTACHE_EXECUTABLE} "${interface_ast_json}" "${GENERATE_WASM_CS_MUSTACHE_TEMPLATE}" > "${wasm_csharp_cs}"
                 COMMAND ${CMAKE_COMMAND} -E echo "Successfully generated ${wasm_csharp_cs}"
+                COMMAND_ERROR_IS_FATAL ANY
                 DEPENDS ${interface_ast_json} "${GENERATE_WASM_CS_MUSTACHE_TEMPLATE}"
                 COMMENT "Generating ${header_basename}.wasm.cs from interface JSON using mustache template"
             )
@@ -251,6 +257,7 @@ function(arieo_generate_interface_code target_project)
                 COMMAND ${CMAKE_COMMAND} -E echo "Generating Rust WASM wrapper for ${header_basename}..."
                 COMMAND ${MUSTACHE_EXECUTABLE} "${interface_ast_json}" "${GENERATE_WASM_RS_MUSTACHE_TEMPLATE}" > "${wasm_rust_rs}"
                 COMMAND ${CMAKE_COMMAND} -E echo "Successfully generated ${wasm_rust_rs}"
+                COMMAND_ERROR_IS_FATAL ANY
                 DEPENDS ${interface_ast_json} "${GENERATE_WASM_RS_MUSTACHE_TEMPLATE}"
                 COMMENT "Generating ${header_basename}.wasm.rs from interface JSON using mustache template"
             )
