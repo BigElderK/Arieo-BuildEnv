@@ -51,6 +51,17 @@ function(arieo_engine_project_install_configure target_project)
     set(package_name "$ENV{CUR_ARIEO_PACKAGE_NAME}")
     message(STATUS "Using package name from CUR_ARIEO_PACKAGE_NAME: ${package_name}")
     
+    # Track all targets for this package using a cache variable
+    # This allows multiple targets to be accumulated under the same package
+    if(NOT DEFINED ARIEO_PACKAGE_TARGETS_${package_name})
+        set(ARIEO_PACKAGE_TARGETS_${package_name} "" CACHE INTERNAL "List of targets for package ${package_name}")
+    endif()
+    list(APPEND ARIEO_PACKAGE_TARGETS_${package_name} ${target_project})
+    set(ARIEO_PACKAGE_TARGETS_${package_name} "${ARIEO_PACKAGE_TARGETS_${package_name}}" CACHE INTERNAL "List of targets for package ${package_name}")
+    
+    message(STATUS "Registered target ${target_project} for package ${package_name}")
+    message(STATUS "Current targets for ${package_name}: ${ARIEO_PACKAGE_TARGETS_${package_name}}")
+    
     # Get include directories from target properties
     get_target_property(PUBLIC_INCLUDE_DIRS ${target_project} INTERFACE_INCLUDE_DIRECTORIES)
         
@@ -58,8 +69,9 @@ function(arieo_engine_project_install_configure target_project)
     # Note: INCLUDES DESTINATION only sets metadata (tells consumers where to look for headers)
     #       It does NOT copy any files - we need separate install(DIRECTORY) commands below
     # Libraries are installed to build-type subdirectories to support multi-config installs
+    # IMPORTANT: Use package_name for EXPORT to group all targets under same export
     install(TARGETS ${target_project}
-        EXPORT ${target_project}Targets
+        EXPORT ${package_name}Targets
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/$<CONFIG>
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/$<CONFIG>
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/$<CONFIG>
@@ -99,7 +111,8 @@ function(arieo_engine_project_install_configure target_project)
 
     # Export targets for use by other CMake projects
     # Use package_name for the export file to match find_package() expectations
-    install(EXPORT ${target_project}Targets
+    # This export includes all targets registered under this package name
+    install(EXPORT ${package_name}Targets
         FILE ${package_name}Targets.cmake
         NAMESPACE ${package_name}::
         DESTINATION cmake
@@ -111,8 +124,18 @@ function(arieo_engine_project_install_configure target_project)
     # AND @PACKAGE_...@ path transformations, so we don't need configure_file() first
     set(CONFIG_TEMPLATE_FILE ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/engine_project_install_config.cmake.in)
     
-    # Set variable for template substitution
+    # Build list of all exported targets with package namespace
+    set(package_exported_targets "")
+    foreach(target ${ARIEO_PACKAGE_TARGETS_${package_name}})
+        if(package_exported_targets)
+            string(APPEND package_exported_targets " ")
+        endif()
+        string(APPEND package_exported_targets "${package_name}::${target}")
+    endforeach()
+    
+    # Set variables for template substitution
     set(target_project_name ${target_project})
+    set(package_targets_list ${package_exported_targets})
     
     # Generate find_dependency calls for required packages
     set(package_dependencies_code "")
