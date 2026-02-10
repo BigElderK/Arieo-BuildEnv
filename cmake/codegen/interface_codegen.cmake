@@ -120,6 +120,7 @@ function(arieo_generate_interface_code target_project)
             "--output-file=${output_json}"
             "--root-namespace=${ARGUMENT_ROOT_NAMESPACE}"
             "--package-name=${ARGUMENT_SCRIPT_PACKAGE_NAME}"
+            "--target-system=${CMAKE_SYSTEM_NAME}"
         )
         
         # Add include files arguments

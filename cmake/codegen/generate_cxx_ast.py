@@ -487,7 +487,8 @@ def run_clang_ast_dump(
     output_file: str,
     include_files: List[str] = None,
     std: str = "c++20",
-    ast_filter: Optional[str] = None
+    ast_filter: Optional[str] = None,
+    target_system: Optional[str] = None
 ) -> bool:
     """
     Run clang to generate AST JSON from a C++ header file.
@@ -500,6 +501,8 @@ def run_clang_ast_dump(
         output_file: Path to output JSON file
         std: C++ standard version (default: c++20)
         ast_filter: Optional AST filter pattern (e.g., "Arieo::Interface")
+        target_system: Optional target system name (linux, android, windows, macos, raspberry)
+                      None = auto-detect from include paths
     
     Returns:
         True if successful, False otherwise
@@ -514,6 +517,17 @@ def run_clang_ast_dump(
     if include_files is None:
         include_files = []
     
+    # Determine if we need cross-platform mode
+    # If target_system is not specified, try to auto-detect from include paths
+    if target_system is None:
+        # Auto-detect: check if we're parsing cross-platform headers
+        if any("sysroot" in inc_dir.lower() and ("linux" in inc_dir.lower() or "ubuntu" in inc_dir.lower()) 
+                for inc_dir in include_dirs):
+            target_system = "linux"
+        elif any("sysroot" in inc_dir.lower() and "android" in inc_dir.lower() 
+                for inc_dir in include_dirs):
+            target_system = "android"
+    
     # Regular clang/clang++ uses GCC-style command line options
     cmd = [
         clang_executable,
@@ -525,6 +539,54 @@ def run_clang_ast_dump(
         "-Xclang", "-ast-dump=json",
         "-Xclang", "-detailed-preprocessing-record",
     ]
+    
+    # Configure cross-platform compilation based on target_system
+    if target_system:
+        target_system_lower = target_system.lower()
+        
+        # Skip cross-platform mode for Windows (use default clang behavior)
+        if target_system_lower == "windows":
+            print(f"Native Windows mode: Using default clang configuration")
+        else:
+            # Common flags for all cross-platform scenarios
+            cmd.extend([
+                "-nostdinc",      # Don't use standard system C include directories
+                "-nostdinc++",    # Don't use standard system C++ include directories
+            ])
+        
+        # Platform-specific target triple and defines
+        if target_system_lower in ["linux", "ubuntu"]:
+            cmd.extend([
+                "--target=x86_64-unknown-linux-gnu",
+                "-D__linux__",
+                "-D__STDC_HOSTED__=1",
+            ])
+            print(f"Cross-platform mode: Targeting Linux (specified: {target_system})")
+        elif target_system_lower == "android":
+            cmd.extend([
+                "--target=aarch64-linux-android30",  # Include API level in target triple
+                "-D__ANDROID__",
+                "-D__ANDROID_API__=30",  # API level 30 (Android 11) for full pthread support
+                "-D__linux__",
+                "-D__STDC_HOSTED__=1",
+            ])
+            print(f"Cross-platform mode: Targeting Android (specified: {target_system})")
+        elif target_system_lower in ["macos", "darwin"]:
+            cmd.extend([
+                "--target=arm64-apple-darwin",
+                "-D__APPLE__",
+                "-D__MACH__",
+            ])
+            print(f"Cross-platform mode: Targeting macOS (specified: {target_system})")
+        elif target_system_lower == "raspberry":
+            cmd.extend([
+                "--target=aarch64-unknown-linux-gnu",
+                "-D__linux__",
+                "-D__STDC_HOSTED__=1",
+            ])
+            print(f"Cross-platform mode: Targeting Raspberry Pi (specified: {target_system})")
+        else:
+            print(f"Warning: Unknown target system '{target_system}', using default cross-platform flags")
     
     # Add AST filter if specified
     if ast_filter:
@@ -1148,6 +1210,8 @@ def main():
                         help='File to pre-include with -include flag (can be specified multiple times)')
     parser.add_argument('--include-dir', action='append', dest='include_dirs', default=[],
                         help='Include directory to add with -I flag (can be specified multiple times)')
+    parser.add_argument('--target-system', dest='target_system', default=None,
+                        help='Target system name (linux, android, windows, macos, raspberry)')
     
     args = parser.parse_args()
     
@@ -1159,7 +1223,8 @@ def main():
         include_dirs=args.include_dirs,
         output_file=args.output_file,
         include_files=args.include_files,
-        ast_filter=args.root_namespace
+        ast_filter=args.root_namespace,
+        target_system=args.target_system
     )
     
     # Always continue to post-processing, even if clang had issues

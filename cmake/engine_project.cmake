@@ -35,13 +35,12 @@ function(arieo_engine_project target_project)
     
     string(TOLOWER "${ARGUMENT_PROJECT_TYPE}" ARGUMENT_PROJECT_TYPE)
 
-    message(WARNING, "Building project ${target_project} before CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
     # Append extra prefix paths from dependencies without overriding preset values
     if(DEFINED ENV{ARIEO_CMAKE_EXTRA_PREFIX_PATH})
         list(APPEND CMAKE_PREFIX_PATH $ENV{ARIEO_CMAKE_EXTRA_PREFIX_PATH})
     endif()
 
-    message(WARNING, "Building project ${target_project} after CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+    message(STATUS "Building project ${target_project} with CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
     # Check Environment CONAN_BUILD_ENV_CHECK is true
     # if(NOT DEFINED ENV{CONAN_BUILD_ENV_CHECK})
