@@ -15,7 +15,8 @@
             "strategy": "external"
         },
         "environment": {
-            "VS_WORKSPACE": "${sourceDir}/.."
+            "VS_WORKSPACE": "${sourceDir}/..",
+            "CLANG_FOR_CODEGEN": "$env{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$env{DEVCRAFT_HOST_TRIPLE}/bin/clang++"
         },
         "cmakeExecutable": "${sourceDir}/cmake/cmake_wrapper_for_vscode.bat",
         "cacheVariables": {

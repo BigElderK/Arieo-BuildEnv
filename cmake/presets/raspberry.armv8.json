@@ -13,6 +13,9 @@
         "value": "armv8",
         "strategy": "external"
       },
+      "environment": {
+        "CLANG_FOR_CODEGEN": "$env{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$env{DEVCRAFT_HOST_TRIPLE}/bin/clang++"
+      },
       "cacheVariables": {
         "ARIEO_HOST_OS": "raspberry",
         "TARGET_TRIPLE": "aarch64-linux-gnu",
