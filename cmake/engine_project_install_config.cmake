@@ -43,12 +43,12 @@ function(arieo_engine_project_install_configure target_project)
         "${multiValueArgs}"
         ${ARGN})
     
-    # Determine package name for config files from CUR_ARIEO_PACKAGE_NAME environment variable
-    if(NOT DEFINED ENV{CUR_ARIEO_PACKAGE_NAME})
-        message(FATAL_ERROR "CUR_ARIEO_PACKAGE_NAME environment variable is not defined")
+    # Determine package name for config files from CUR_ARIEO_PACKAGE_NAME variable
+    if(NOT DEFINED CUR_ARIEO_PACKAGE_NAME)
+        message(FATAL_ERROR "CUR_ARIEO_PACKAGE_NAME variable is not defined")
     endif()
     
-    set(package_name "$ENV{CUR_ARIEO_PACKAGE_NAME}")
+    set(package_name "${CUR_ARIEO_PACKAGE_NAME}")
     message(STATUS "Using package name from CUR_ARIEO_PACKAGE_NAME: ${package_name}")
     
     # Track all targets for this package using a cache variable
