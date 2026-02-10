@@ -1,8 +1,4 @@
 {
     "name": "Arieo-BuildEnv",
-    "description": "Build environment for Areio projects",
-    "install_commands": 
-    [
-        "cmake -P install_package.cmake"
-    ]
+    "description": "Build environment for Areio projects"
 }
