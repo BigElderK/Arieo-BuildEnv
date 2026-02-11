@@ -59,7 +59,7 @@ add_custom_command(
         --build=never
         --profile=${conan_host_profile_file}
     COMMAND ${CMAKE_COMMAND} -E touch ${CONAN_STAMP_FILE}
-    COMMENT "Running conan install for ${CMAKE_CONFIGURE_PRESET}"
+    COMMENT "Running conan install for preset: ${CMAKE_CONFIGURE_PRESET}"
     COMMAND_ERROR_IS_FATAL ANY
     USES_TERMINAL
     VERBATIM
