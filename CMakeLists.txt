@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(Arieo-BuildEnv)
 
-set(conan_host_profile_file "")
-
 # CMAKE_CONFIGURE_PRESET is set by install_config.cmake included before this script
 # Check if CMAKE_CONFIGURE_PRESET is defined
 if(NOT DEFINED CMAKE_CONFIGURE_PRESET)
@@ -22,21 +20,23 @@ if (${CMAKE_CONFIGURE_PRESET} STREQUAL "ubuntu.x86_64")
 endif()
 
 # Add host profiles only for windows platform
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    if (${CMAKE_CONFIGURE_PRESET} STREQUAL "windows.x86_64")
-        set(conan_host_profile_file ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt)
+if (${CMAKE_CONFIGURE_PRESET} STREQUAL "windows.x86_64")
+    if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        set(conan_host_profile_file ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.windows.x86_64.txt)    
+    else()
+        message(FATAL_ERROR "Preset windows.x86_64 is only supported on Windows host platform.")
     endif()
-else()
-    #message(FATAL_ERROR "Windows platform only support Windows host system.")
 endif()
 
+message(STATUS "Using Conan host profile: ${conan_host_profile_file}")
+
 # Add host profiles only for darwin platform
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-    if (${CMAKE_CONFIGURE_PRESET} STREQUAL "macos.arm64")
+if (${CMAKE_CONFIGURE_PRESET} STREQUAL "macos.arm64")
+    if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
         set(conan_host_profile_file ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.macos.arm64.txt)
+    else()
+        message(FATAL_ERROR "Preset macos.arm64 is only supported on Darwin host platform.")
     endif()
-else()
-    #message(FATAL_ERROR "macOS platform only supports Darwin host system.")
 endif()
 
 # Use a stamp file to track conan installation completion (preset-specific)
@@ -65,11 +65,6 @@ add_custom_command(
     VERBATIM
 )
 
-# This target will be built as part of ALL
-add_custom_target(arieo_build_env ALL
-    DEPENDS ${CONAN_STAMP_FILE}
-)
-
 # Generate wrapper files from templates
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/build_environment.cmake.in
@@ -83,8 +78,14 @@ configure_file(
     @ONLY
 )
 
+# This target will be built as part of ALL
+add_custom_target(arieo_build_env ALL
+    DEPENDS ${CONAN_STAMP_FILE}
+)
+
 ###########################################################################
 # Install conan generated files
+
 install(DIRECTORY ${CMAKE_BINARY_DIR}/conan/host/${CMAKE_CONFIGURE_PRESET}/
     DESTINATION conan/host/${CMAKE_CONFIGURE_PRESET}
 )
@@ -109,4 +110,3 @@ install(
     FILES ${CMAKE_BINARY_DIR}/CMakePresets.json
     DESTINATION cmake
 )
-
