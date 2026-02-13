@@ -28,6 +28,14 @@ function(arieo_module_project target_project)
 
     # Create target
     add_library(${target_project} MODULE)
+
+    # Conan's toolchain only sets CMAKE_SHARED_LINKER_FLAGS_INIT / CMAKE_EXE_LINKER_FLAGS_INIT
+    # but NOT CMAKE_MODULE_LINKER_FLAGS_INIT, so MODULE targets miss -lc++ etc.
+    # Apply the shared linker flags directly to this MODULE target.
+    if(CMAKE_SHARED_LINKER_FLAGS AND NOT CMAKE_SHARED_LINKER_FLAGS STREQUAL "")
+        separate_arguments(_shared_link_flags NATIVE_COMMAND "${CMAKE_SHARED_LINKER_FLAGS}")
+        target_link_options(${target_project} PRIVATE ${_shared_link_flags})
+    endif()
     
     if(DEFINED ARGUMENT_ALIAS)
         add_library(${ARGUMENT_ALIAS} ALIAS ${target_project})

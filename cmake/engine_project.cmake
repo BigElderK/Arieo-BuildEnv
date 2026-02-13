@@ -52,10 +52,6 @@ function(arieo_engine_project target_project)
     # No need to manually include it here
     # include(${CMAKE_TOOLCHAIN_FILE})
 
-    if(NOT DEFINED CMAKE_MODULE_LINKER_FLAGS_INIT)
-        set(CMAKE_MODULE_LINKER_FLAGS_INIT "${CMAKE_SHARED_LINKER_FLAGS_INIT}")
-    endif()
-
     # make all program compile with fpic
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -76,12 +72,6 @@ function(arieo_engine_project target_project)
     # Force set msvc crt as MD
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
     message(STATUS "Arieo MSVC CRT LIB: ${CMAKE_MSVC_RUNTIME_LIBRARY}")
-
-    # add all engine package install folder to prefix
-    # add_engine_packages_to_prefix_path(
-    #     PACKAGES_ROOT $ENV{ARIEO_PACKAGE_ROOT_INSTALL_FOLDER}
-    #     HOST_PRESET $ENV{ARIEO_PACKAGE_BUILD_HOST_PRESET}
-    # )
 
     # Dispatch to specialized function based on project type
     if("${ARGUMENT_PROJECT_TYPE}" STREQUAL "base")
