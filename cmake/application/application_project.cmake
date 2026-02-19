@@ -13,6 +13,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/script/application_script_rust.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/script/application_script_cxx.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/script/application_script_dotnet.cmake)
 
+include(${CMAKE_CURRENT_LIST_DIR}/script/wasm_cxx_project.cmake)
+
 function(arieo_application_project target_project)
     # Require CMAKE_BUILD_TYPE to be set
     if(NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
