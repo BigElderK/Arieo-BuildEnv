@@ -25,15 +25,9 @@ function(arieo_engine_project_install_configure target_project)
     )
 
     set(multiValueArgs
-        PACKAGES
-        PUBLIC_INCLUDE_FOLDERS
-        INTERFACES
-        PUBLIC_LIBS
-        PRIVATE_LIBS
-        EXTERNAL_LIBS
-        PRIVATE_INCLUDE_FOLDERS
-        PRIVATE_LIB_FOLDERS
+        DEPENDENCIES
         SOURCES
+        INTERFACE_CODE_GENERATION
     )
 
     cmake_parse_arguments(
@@ -42,6 +36,24 @@ function(arieo_engine_project_install_configure target_project)
         "${oneValueArgs}"
         "${multiValueArgs}"
         ${ARGN})
+    
+    # Sub-parse DEPENDENCIES to extract THIRDPARTY_PACKAGES and PUBLIC_LIBS
+    set(dep_multiValueArgs
+        ARIEO_PACKAGES
+        THIRDPARTY_PACKAGES
+        INTERFACES
+        PUBLIC_LIBS
+        PRIVATE_LIBS
+        EXTERNAL_LIBS
+        PRIVATE_LIB_FOLDERS
+    )
+    cmake_parse_arguments(
+        DEP
+        ""
+        ""
+        "${dep_multiValueArgs}"
+        ${ARG_DEPENDENCIES}
+    )
     
     # Determine package name for config files from CUR_PROCESSING_ARIEO_PACKAGE_NAME variable
     if(NOT DEFINED CUR_PROCESSING_ARIEO_PACKAGE_NAME)
@@ -139,9 +151,16 @@ function(arieo_engine_project_install_configure target_project)
     set(package_targets_list ${package_exported_targets})
     
     # Generate find_dependency calls for required packages
+    # This ensures transitive dependencies are properly resolved for consumers
     set(package_dependencies_code "")
-    if(ARG_PACKAGES)
-        foreach(pkg ${ARG_PACKAGES})
+    if(DEP_THIRDPARTY_PACKAGES)
+        foreach(pkg ${DEP_THIRDPARTY_PACKAGES})
+            string(APPEND package_dependencies_code "find_dependency(${pkg} REQUIRED)\n")
+        endforeach()
+    endif()
+    # Also add ARIEO_PACKAGES dependencies
+    if(DEP_ARIEO_PACKAGES)
+        foreach(pkg ${DEP_ARIEO_PACKAGES})
             string(APPEND package_dependencies_code "find_dependency(${pkg} REQUIRED)\n")
         endforeach()
     endif()

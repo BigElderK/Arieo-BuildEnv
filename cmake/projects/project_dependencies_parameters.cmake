@@ -1,6 +1,8 @@
 function(project_dependencies_parameters target_project)
+    
     set(multiValueArgs 
-        PACKAGES
+        ARIEO_PACKAGES
+        THIRDPARTY_PACKAGES
         INTERFACES
         PUBLIC_LIBS
         PRIVATE_LIBS
@@ -18,8 +20,8 @@ function(project_dependencies_parameters target_project)
 
     # Debug logging for parsed dependencies
     message(STATUS "Configuring dependencies for ${target_project}:")
-    if(DEFINED ARGUMENT_PACKAGES)
-        message(STATUS "  PACKAGES: ${ARGUMENT_PACKAGES}")
+    if(DEFINED ARGUMENT_THIRDPARTY_PACKAGES)
+        message(STATUS "  THIRDPARTY_PACKAGES: ${ARGUMENT_THIRDPARTY_PACKAGES}")
     endif()
     if(DEFINED ARGUMENT_INTERFACES)
         message(STATUS "  INTERFACES: ${ARGUMENT_INTERFACES}")
@@ -29,6 +31,9 @@ function(project_dependencies_parameters target_project)
     endif()
     if(DEFINED ARGUMENT_PRIVATE_LIBS)
         message(STATUS "  PRIVATE_LIBS: ${ARGUMENT_PRIVATE_LIBS}")
+    endif()
+    if(DEFINED ARGUMENT_ARIEO_PACKAGES)
+        message(STATUS "  ARIEO_PACKAGES: ${ARGUMENT_ARIEO_PACKAGES}")
     endif()
 
     # Validate target exists
@@ -44,8 +49,18 @@ function(project_dependencies_parameters target_project)
         set(is_interface_library FALSE)
     endif()
 
+    if(DEFINED ARGUMENT_ARIEO_PACKAGES)
+        foreach(ARGUMENT_PACKAGE IN LISTS ARGUMENT_ARIEO_PACKAGES)
+            message(STATUS "Finding package: ${ARGUMENT_PACKAGE}")
+            find_package(${ARGUMENT_PACKAGE} REQUIRED)
+            if(NOT ${ARGUMENT_PACKAGE}_FOUND)
+                message(FATAL_ERROR "Package ${ARGUMENT_PACKAGE} not found. Check CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
+            endif()
+        endforeach()
+    endif()
+
     # add packages
-    foreach(ARGUMENT_PACKAGE IN LISTS ARGUMENT_PACKAGES)
+    foreach(ARGUMENT_PACKAGE IN LISTS ARGUMENT_THIRDPARTY_PACKAGES)
         message(STATUS "Finding package: ${ARGUMENT_PACKAGE}")
         find_package(${ARGUMENT_PACKAGE} REQUIRED)
         if(NOT ${ARGUMENT_PACKAGE}_FOUND)
