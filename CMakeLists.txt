@@ -118,9 +118,18 @@ configure_file(
     @ONLY
 )
 
+
 configure_file(
-    ${CMAKE_CURRENT_LIST_DIR}/CMakePresets.json.in
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/CMakePresets.json.in
     ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
+    @ONLY
+)
+
+set(ARIEO_BUILD_ENV_PACKAGES_OUTPUT_DIR $ENV{ARIEO_BUILD_ENV_PACKAGES_OUTPUT_DIR})
+set(ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR $ENV{ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR})
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/presets/base.json.in
+    ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/presets/base.json
     @ONLY
 )
 
@@ -128,6 +137,11 @@ configure_file(
 # copy CMakePresets.json to the source directory as well for better IDE integration (some IDEs only look for CMakePresets.json in the source directory)
 add_custom_command(
     OUTPUT $ENV{ARIEO_WORKSPACE_ROOT_DIR}/CMakeUserPresets.json
+    # Copy all files from presets directory during build stage
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/presets
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_LIST_DIR}/cmake/presets
+        ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/presets
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
         $ENV{ARIEO_WORKSPACE_ROOT_DIR}/CMakeUserPresets.json

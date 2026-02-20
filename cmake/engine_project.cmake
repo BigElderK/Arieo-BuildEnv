@@ -7,8 +7,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/projects/project_sources_parameters.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/projects/project_interface_parameters.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/projects/project_interface_code_gen_parameters.cmake)
 
-# Include installation configuration function
-include(${CMAKE_CURRENT_LIST_DIR}/engine_project_install_config.cmake)
 
 # Main dispatcher function
 function(arieo_engine_project target_project)
@@ -77,9 +75,4 @@ function(arieo_engine_project target_project)
     if(DEFINED ARGUMENT_INTERFACE_CODE_GENERATION)
         project_interface_code_gen_parameters(${target_project} ${ARGUMENT_INTERFACE_CODE_GENERATION})
     endif()
-
-    arieo_engine_project_install_configure(
-        ${target_project}
-        ${ARGN}
-    )
 endfunction()

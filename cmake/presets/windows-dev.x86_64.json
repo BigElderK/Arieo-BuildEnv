@@ -28,7 +28,7 @@
             "CMAKE_POLICY_DEFAULT_CMP0091": "NEW",
             "CMAKE_PREFIX_PATH": {
                 "type": "PATH",
-                "value": "$env{ARIEO_THIRDPARTIES_PACKAGE_OUTPUT_DIR}/conan/windows.x86_64"
+                "value": "$env{ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR}/conan/windows.x86_64"
             }
         }
     }

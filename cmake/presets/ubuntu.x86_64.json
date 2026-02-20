@@ -21,7 +21,7 @@
         "TARGET_TRIPLE": "x86_64-linux-gnu",
         "CMAKE_PREFIX_PATH": {
           "type": "PATH",
-          "value": "$env{ARIEO_THIRDPARTIES_PACKAGE_OUTPUT_DIR}/conan/ubuntu.x86_64"
+          "value": "$env{ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR}/conan/ubuntu.x86_64"
         }
       }
     }

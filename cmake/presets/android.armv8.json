@@ -22,7 +22,7 @@
         "TARGET_TRIPLE": "aarch64-linux-android35",
         "CMAKE_PREFIX_PATH": {
           "type": "PATH",
-          "value": "$env{ARIEO_THIRDPARTIES_PACKAGE_OUTPUT_DIR}/conan/android.armv8;$env{ARIEO_THIRDPARTIES_PACKAGE_OUTPUT_DIR}/gradle/android.armv8"
+          "value": "$env{ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR}/conan/android.armv8;$env{ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR}/gradle/android.armv8"
         }
       }
     }

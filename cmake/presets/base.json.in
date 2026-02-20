@@ -1,0 +1,19 @@
+{
+  "version": 4,
+    "configurePresets": [
+        {
+            "name": "base",
+            "generator": "Ninja",
+            "environment": {
+                "ARIEO_BUILD_ENV_PACKAGES_OUTPUT_DIR": "@ARIEO_BUILD_ENV_PACKAGES_OUTPUT_DIR@",
+                "ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR": "@ARIEO_THIRDPARTIES_PACKAGES_OUTPUT_DIR@"
+            },
+            "cacheVariables": {
+                "ARIEO_BUILD_NAME": "${presetName}",
+                "ARIEO_HOST_OS": "Unknown",
+                "TARGET_TRIPLE": "Unknown",
+                "CMAKE_POLICY_DEFAULT_CMP0091": "NEW"
+            }
+        }
+    ]
+}
