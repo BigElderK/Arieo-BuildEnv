@@ -114,13 +114,13 @@ endif()
 # Generate wrapper files from templates
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/build_environment.cmake.in
-    ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/build_environment.cmake
+    ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/build_environment.cmake
     @ONLY
 )
 
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/CMakePresets.json.in
-    ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/CMakePresets.json
+    ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
     @ONLY
 )
 
@@ -129,9 +129,9 @@ configure_file(
 add_custom_command(
     OUTPUT $ENV{ARIEO_WORKSPACE_ROOT_DIR}/CMakeUserPresets.json
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/CMakePresets.json
+        ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
         $ENV{ARIEO_WORKSPACE_ROOT_DIR}/CMakeUserPresets.json
-    DEPENDS ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/CMakePresets.json
+    DEPENDS ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
     COMMENT "Copying CMakePresets.json to source directory for IDE integration"
 )
 add_custom_target(copy_cmake_presets ALL
