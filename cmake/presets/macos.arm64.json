@@ -21,7 +21,7 @@
         "TARGET_TRIPLE": "arm64-apple-darwin",
         "CMAKE_PREFIX_PATH": {
           "type": "PATH",
-          "value": "$env{ARIEO_THIRDPARTIES_PACKAGE_INSTALL_FOLDER}/conan/macos.arm64"
+          "value": "$env{ARIEO_THIRDPARTIES_PACKAGE_OUTPUT_FOLDER}/conan/macos.arm64"
         }
       }
     }
