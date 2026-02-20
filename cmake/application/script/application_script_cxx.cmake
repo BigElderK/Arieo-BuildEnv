@@ -99,7 +99,7 @@ function(arieo_build_cxx_scripts target_project script_folder)
         add_custom_target(
             ${target_project}_build_${cmake_project_name} ALL
             COMMAND ${CMAKE_COMMAND} -E make_directory ${ext_build_dir}
-            COMMAND ${CMAKE_COMMAND} -E env "ARIEO_BUILDENV_PACKAGE_INSTALL_FOLDER=$ENV{ARIEO_BUILDENV_PACKAGE_INSTALL_FOLDER}"
+            COMMAND ${CMAKE_COMMAND} -E env "ARIEO_BUILDENV_PACKAGE_INSTALL_FOLDER=$env{ARIEO_BUILD_ENV_PACKAGES_OUTPUT_DIR}"
                 ${CMAKE_COMMAND} -S ${cmake_file_dir} -B ${ext_build_dir} -G "Ninja" 
                 -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                 -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
