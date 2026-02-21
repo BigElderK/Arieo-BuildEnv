@@ -24,8 +24,9 @@ function(ArieoPackage package)
 
     # Set global variables for package name and category to be used in install function
     # set(ARIEO_PACKAGE_NAME "${package}" CACHE INTERNAL "Name for Arieo package")
-    set(ARIEO_PACKAGE_NAME "${package}" CACHE INTERNAL "Name for Arieo package")
-    set(ARIEO_PACKAGE_CATEGORY "${ARGUMENT_CATEGORY}" CACHE INTERNAL "Category for Arieo packages")
+    # set(ARIEO_PACKAGE_CATEGORY "${ARGUMENT_CATEGORY}" CACHE INTERNAL "Category for Arieo packages")
+    set(ARIEO_PACKAGE_NAME "${package}" PARENT_SCOPE)
+    set(ARIEO_PACKAGE_CATEGORY "${ARGUMENT_CATEGORY}" PARENT_SCOPE)
     add_custom_target(
         ${package}
         DEPENDS 
