@@ -71,15 +71,11 @@ function(project_dependencies_parameters target_project)
 
     # Add private lib folders (not for INTERFACE libraries)
     if(DEFINED ARGUMENT_PRIVATE_LIB_FOLDERS)
-        if(is_interface_library)
-            message(WARNING "INTERFACE library ${target_project} cannot have PRIVATE_LIB_FOLDERS. Ignoring.")
-        else()
-            target_link_directories(
-                ${target_project}
-                PRIVATE 
-                    ${ARGUMENT_PRIVATE_LIB_FOLDERS}
-            )
-        endif()
+        target_link_directories(
+            ${target_project}
+            PRIVATE 
+                ${ARGUMENT_PRIVATE_LIB_FOLDERS}
+        )
     endif()
 
     # Add interfaces
@@ -162,16 +158,6 @@ function(set_target_libraries target_project)
         "${multiValueArgs}"
         ${ARGN}
     )
-
-    # Check if target is an INTERFACE library
-    # get_target_property(target_type ${target_project} TYPE)
-    # if(target_type STREQUAL "INTERFACE_LIBRARY")
-    #     set(is_interface_library TRUE)
-    # else()
-    #     set(is_interface_library FALSE)
-    # endif()
-
-
 
     target_link_libraries(
         ${target_project}
