@@ -44,6 +44,7 @@ function(project_install_paramters target_project)
     set(install_runtime_dir "${CMAKE_INSTALL_PREFIX}/${ARIEO_PACKAGE_CATEGORY}/${ARIEO_PACKAGE_NAME}/${ARIEO_BUILD_CONFIGURE_PRESET}/bin/${CMAKE_BUILD_TYPE}")
     set(install_includes_dir "${CMAKE_INSTALL_PREFIX}/${ARIEO_PACKAGE_CATEGORY}/${ARIEO_PACKAGE_NAME}/${ARIEO_BUILD_CONFIGURE_PRESET}/include")
     set(install_cmake_dir "${CMAKE_INSTALL_PREFIX}/${ARIEO_PACKAGE_CATEGORY}/${ARIEO_PACKAGE_NAME}/${ARIEO_BUILD_CONFIGURE_PRESET}/cmake")
+    set(install_interface_codegen_dir "${CMAKE_INSTALL_PREFIX}/${ARIEO_PACKAGE_CATEGORY}/${ARIEO_PACKAGE_NAME}/${ARIEO_BUILD_CONFIGURE_PRESET}/interface")
 
     install(TARGETS ${target_project}
         EXPORT ${ARIEO_PACKAGE_NAME}Targets
@@ -155,4 +156,11 @@ function(project_install_paramters target_project)
         ${CMAKE_CURRENT_BINARY_DIR}/${ARIEO_PACKAGE_NAME}ConfigVersion.cmake
         DESTINATION ${install_cmake_dir}
     )
+
+    # Install Interface code generate folder if any
+    if(DEFINED INTERFACE_CODEGEN_ROOT_FOLDER)
+        install(DIRECTORY ${INTERFACE_CODEGEN_ROOT_FOLDER}/
+            DESTINATION ${install_interface_codegen_dir}
+        )
+    endif()
 endfunction()

@@ -2,6 +2,9 @@ function(project_interface_code_gen_parameters target_project)
     set(oneValueArgs 
         ROOT_NAMESPACE
         SCRIPT_PACKAGE_NAME
+        
+        GENERATE_ROOT_FOLDER
+
         AST_GENERATE_FOLDER
         NATIVE_CODE_GENERATE_FOLDER
         WASM_WIT_GENERATE_FOLDER
@@ -24,9 +27,25 @@ function(project_interface_code_gen_parameters target_project)
         return()
     endif()
 
+    # Resolve sub-folder paths: ${GENERATE_ROOT_FOLDER} is not a CMake variable at call-site,
+    # so ${GENERATE_ROOT_FOLDER}/ast expands to /ast (empty prefix + /ast).
+    # Detect paths that lost their root and prepend ARGUMENT_GENERATE_ROOT_FOLDER.
+    if(ARGUMENT_GENERATE_ROOT_FOLDER)
+        set(ARGUMENT_AST_GENERATE_FOLDER "${ARGUMENT_GENERATE_ROOT_FOLDER}${ARGUMENT_AST_GENERATE_FOLDER}")
+        set(ARGUMENT_NATIVE_CODE_GENERATE_FOLDER "${ARGUMENT_GENERATE_ROOT_FOLDER}${ARGUMENT_NATIVE_CODE_GENERATE_FOLDER}")
+        set(ARGUMENT_WASM_WIT_GENERATE_FOLDER "${ARGUMENT_GENERATE_ROOT_FOLDER}${ARGUMENT_WASM_WIT_GENERATE_FOLDER}")
+        set(ARGUMENT_WASM_CXX_SCRIPT_GENERATE_FOLDER "${ARGUMENT_GENERATE_ROOT_FOLDER}${ARGUMENT_WASM_CXX_SCRIPT_GENERATE_FOLDER}")
+        set(ARGUMENT_WASM_CSHARP_SCRIPT_GENERATE_FOLDER "${ARGUMENT_GENERATE_ROOT_FOLDER}${ARGUMENT_WASM_CSHARP_SCRIPT_GENERATE_FOLDER}")
+        set(ARGUMENT_WASM_RUST_SCRIPT_GENERATE_FOLDER "${ARGUMENT_GENERATE_ROOT_FOLDER}${ARGUMENT_WASM_RUST_SCRIPT_GENERATE_FOLDER}")
+    endif()
+
+    # Set paramter to parent scope for use in install steps
+    set(INTERFACE_CODEGEN_ROOT_FOLDER ${ARGUMENT_GENERATE_ROOT_FOLDER} PARENT_SCOPE)
+
     message(STATUS "Configuring interface code generation for ${target_project}")
     message(STATUS "  ROOT_NAMESPACE: ${ARGUMENT_ROOT_NAMESPACE}")
     message(STATUS "  SCRIPT_PACKAGE_NAME: ${ARGUMENT_SCRIPT_PACKAGE_NAME}")
+    message(STATUS "  GENERATE_ROOT_FOLDER: ${ARGUMENT_GENERATE_ROOT_FOLDER}")
 
     # Get interface include folders from target
     get_target_property(interface_includes ${target_project} INTERFACE_INCLUDE_DIRECTORIES)
