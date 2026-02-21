@@ -5,8 +5,9 @@ include(${CMAKE_CURRENT_LIST_DIR}/projects/project_basic_paramters.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/projects/project_dependencies_parameters.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/projects/project_sources_parameters.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/projects/project_interface_parameters.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/projects/project_outputs_paramters.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/projects/project_interface_code_gen_parameters.cmake)
-
+include(${CMAKE_CURRENT_LIST_DIR}/projects/project_install_paramters.cmake)
 
 # Main dispatcher function
 function(arieo_engine_project target_project)
@@ -20,6 +21,8 @@ function(arieo_engine_project target_project)
         DEPENDENCIES
         SOURCES
         INTERFACE_CODE_GENERATION
+        OUTPUTS
+        INSTALLS
     )
 
     cmake_parse_arguments(
@@ -75,4 +78,11 @@ function(arieo_engine_project target_project)
     if(DEFINED ARGUMENT_INTERFACE_CODE_GENERATION)
         project_interface_code_gen_parameters(${target_project} ${ARGUMENT_INTERFACE_CODE_GENERATION})
     endif()
+
+    if(DEFINED ARGUMENT_INTERFACES)
+        project_interface_parameters(${target_project} ${ARGUMENT_INTERFACES})
+    endif()
+    
+    project_outputs_paramters(${target_project} ${ARGUMENT_OUTPUTS})    
+    project_install_paramters(${target_project} ${ARGUMENT_INSTALLS})
 endfunction()
