@@ -3,7 +3,7 @@ function(project_dependencies_parameters target_project)
     set(multiValueArgs
         ARIEO_PACKAGES
         THIRDPARTY_PACKAGES
-        INTERFACES
+        INTERFACE_LIBS
         PUBLIC_LIBS
         PRIVATE_LIBS
         EXTERNAL_LIBS
@@ -23,8 +23,8 @@ function(project_dependencies_parameters target_project)
     if(DEFINED ARGUMENT_THIRDPARTY_PACKAGES)
         message(STATUS "  THIRDPARTY_PACKAGES: ${ARGUMENT_THIRDPARTY_PACKAGES}")
     endif()
-    if(DEFINED ARGUMENT_INTERFACES)
-        message(STATUS "  INTERFACES: ${ARGUMENT_INTERFACES}")
+    if(DEFINED ARGUMENT_INTERFACE_LIBS)
+        message(STATUS "  INTERFACE_LIBS: ${ARGUMENT_INTERFACE_LIBS}")
     endif()
     if(DEFINED ARGUMENT_PUBLIC_LIBS)
         message(STATUS "  PUBLIC_LIBS: ${ARGUMENT_PUBLIC_LIBS}")
@@ -45,7 +45,7 @@ function(project_dependencies_parameters target_project)
         foreach(ARGUMENT_PACKAGE IN LISTS ARGUMENT_ARIEO_PACKAGES)
             message(STATUS "Finding package: ${ARGUMENT_PACKAGE}")
 
-            # Check if ARUGMENT_PACKAGE target is exists
+            # Check if ARGUMENT_PACKAGE target exists
             if(TARGET ${ARGUMENT_PACKAGE})
                 message(STATUS "Found target for package ${ARGUMENT_PACKAGE}")
                 continue()
@@ -79,31 +79,15 @@ function(project_dependencies_parameters target_project)
     endif()
 
     # Add interfaces
-    if(DEFINED ARGUMENT_INTERFACES)
-        set_target_libraries(
-            ${target_project}
-            INTERFACE
-                ${ARGUMENT_INTERFACES}
-        )
-    endif()
-
-    # Add public libs (dependencies used in public headers)
-    if(DEFINED ARGUMENT_PUBLIC_LIBS)
-        set_target_libraries(
-            ${target_project}
-            PUBLIC
-                ${ARGUMENT_PUBLIC_LIBS}
-        )
-    endif()
-
-    # Add private libs
-    if(DEFINED ARGUMENT_PRIVATE_LIBS)
-        set_target_libraries(
-            ${target_project}
-            PRIVATE
-                ${ARGUMENT_PRIVATE_LIBS}
-        )
-    endif()
+    set_target_libraries(
+        ${target_project}
+        PUBLIC
+            ${ARGUMENT_PUBLIC_LIBS}
+        PRIVATE
+            ${ARGUMENT_PRIVATE_LIBS}
+        INTERFACE
+            ${ARGUMENT_INTERFACE_LIBS}
+    )
 
     # Copy external libs to libs folder (not for INTERFACE libraries)
     if(DEFINED ARGUMENT_EXTERNAL_LIBS)
@@ -158,6 +142,48 @@ function(set_target_libraries target_project)
         "${multiValueArgs}"
         ${ARGN}
     )
+
+    # Enforce linkage rules based on the CMake target type:
+    #   INTERFACE_LIBRARY  (PROJECT_TYPE interface)       -> INTERFACE_LIBS only
+    #   MODULE_LIBRARY     (PROJECT_TYPE module)          -> PRIVATE_LIBS only
+    #   EXECUTABLE         (PROJECT_TYPE bootstrap)       -> PRIVATE_LIBS only
+    #   others (static_library, shared_library, ...)      -> any keyword allowed
+    get_target_property(target_type ${target_project} TYPE)
+
+    if(target_type STREQUAL "INTERFACE_LIBRARY")
+        if(DEFINED ARGUMENT_PUBLIC)
+            message(FATAL_ERROR
+                "[set_target_libraries] '${target_project}' is an INTERFACE library (PROJECT_TYPE interface). "
+                "Use INTERFACE_LIBS instead of PUBLIC_LIBS.")
+        endif()
+        if(DEFINED ARGUMENT_PRIVATE)
+            message(FATAL_ERROR
+                "[set_target_libraries] '${target_project}' is an INTERFACE library (PROJECT_TYPE interface). "
+                "Use INTERFACE_LIBS instead of PRIVATE_LIBS.")
+        endif()
+    elseif(target_type STREQUAL "MODULE_LIBRARY")
+        if(DEFINED ARGUMENT_PUBLIC)
+            message(FATAL_ERROR
+                "[set_target_libraries] '${target_project}' is a module (PROJECT_TYPE module). "
+                "Use PRIVATE_LIBS instead of PUBLIC_LIBS.")
+        endif()
+        if(DEFINED ARGUMENT_INTERFACE)
+            message(FATAL_ERROR
+                "[set_target_libraries] '${target_project}' is a module (PROJECT_TYPE module). "
+                "Use PRIVATE_LIBS instead of INTERFACE_LIBS.")
+        endif()
+    elseif(target_type STREQUAL "EXECUTABLE")
+        if(DEFINED ARGUMENT_PUBLIC)
+            message(FATAL_ERROR
+                "[set_target_libraries] '${target_project}' is an executable (PROJECT_TYPE bootstrap). "
+                "Use PRIVATE_LIBS instead of PUBLIC_LIBS.")
+        endif()
+        if(DEFINED ARGUMENT_INTERFACE)
+            message(FATAL_ERROR
+                "[set_target_libraries] '${target_project}' is an executable (PROJECT_TYPE bootstrap). "
+                "Use PRIVATE_LIBS instead of INTERFACE_LIBS.")
+        endif()
+    endif()
 
     target_link_libraries(
         ${target_project}
