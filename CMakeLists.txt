@@ -145,6 +145,7 @@ configure_file(
 
 ########################################################################
 # copy CMakePresets.json to the source directory as well for better IDE integration (some IDEs only look for CMakePresets.json in the source directory)
+file(GLOB ARIEO_PRESET_FILES ${CMAKE_CURRENT_LIST_DIR}/cmake/presets/*)
 add_custom_command(
     OUTPUT $ENV{ARIEO_WORKSPACE_ROOT_DIR}/CMakeUserPresets.json
     # Copy all files from presets directory during build stage
@@ -155,7 +156,9 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
         $ENV{ARIEO_WORKSPACE_ROOT_DIR}/CMakeUserPresets.json
-    DEPENDS ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
+    DEPENDS
+        ${ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR}/cmake/CMakePresets.json
+        ${ARIEO_PRESET_FILES}
     COMMENT "Copying CMakePresets.json to source directory for IDE integration"
 )
 add_custom_target(copy_cmake_presets ALL
