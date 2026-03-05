@@ -28,7 +28,7 @@ tools.cmake.cmakedeps:new=will_break_next
 
 # Set compilers and abi
 tools.build:compiler_executables={'c': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'cpp': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang++${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'ld': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/lld${CMAKE_HOST_EXECUTABLE_SUFFIX}'}
-tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "aarch64-linux-gnu", "CMAKE_CXX_COMPILER_TARGET":  "aarch64-linux-gnu", "CMAKE_C_COMPILER_TARGET": "aarch64-linux-gnu", "CMAKE_ASM_COMPILER_TARGET":"aarch64-linux-gnu", "CMAKE_LINKER_TYPE": "LLD"}
+tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "aarch64-linux-gnu", "CMAKE_CXX_COMPILER_TARGET":  "aarch64-linux-gnu", "CMAKE_C_COMPILER_TARGET": "aarch64-linux-gnu", "CMAKE_ASM_COMPILER_TARGET":"aarch64-linux-gnu", "CMAKE_LINKER_TYPE": "LLD", "CMAKE_POSITION_INDEPENDENT_CODE": "ON"}
 
 # Set sysroot
 tools.build:sysroot = $ENV{DEVCRAFT_WORKSPACE}/sysroot/raspberry_arm64_bookworm

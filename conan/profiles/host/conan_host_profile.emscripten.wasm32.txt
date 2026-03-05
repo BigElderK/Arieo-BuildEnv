@@ -1,0 +1,35 @@
+#https://docs.conan.io/2/reference/config_files/settings.html
+# Conan 2.x shipped os=Emscripten in settings.yml since 2.1
+
+[settings]
+os=Emscripten
+arch=wasm
+compiler=clang
+compiler.version=20
+compiler.libcxx=libc++
+compiler.cppstd=20
+build_type=Release
+
+[options]
+*:shared=False
+*:fPIC=True
+
+[conf]
+tools.build:jobs=8
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.cmake.cmakedeps:new=will_break_next
+
+# Inject the Emscripten platform toolchain before the Conan-generated toolchain
+# so that CMake recognises the Emscripten system and sets up flags correctly
+tools.cmake.cmaketoolchain:user_toolchain=["$ENV{DEVCRAFT_WORKSPACE}/emscripten/emsdk-3.1.73/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"]
+
+# Set emcc / em++ as compilers
+tools.build:compiler_executables={"c": "$ENV{DEVCRAFT_WORKSPACE}/emscripten/emsdk-3.1.73/upstream/emscripten/emcc", "cpp": "$ENV{DEVCRAFT_WORKSPACE}/emscripten/emsdk-3.1.73/upstream/emscripten/em++"}
+tools.cmake.cmaketoolchain:extra_variables={"CMAKE_POSITION_INDEPENDENT_CODE": "ON"}
+
+# Disable crash log (not supported in browser context)
+tools.build:cxxflags+=["-fexceptions", "-fdeclspec", "-fms-extensions", "-fPIC"]
+
+[buildenv]
+CONAN_BUILD_ENV_CHECK=true
+EMSDK=$ENV{EMSDK}

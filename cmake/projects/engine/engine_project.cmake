@@ -47,8 +47,14 @@ function(ARIEO_ENGINE_PROJECT target_project)
 
     message(STATUS "Building project ${target_project} with CMAKE_PREFIX_PATH: ${CMAKE_PREFIX_PATH}")
 
-    # make all program compile with fpic
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+        # clang-scan-deps has trouble with em++ wrapper on Windows and can infer host target.
+        # Disable module dependency scanning (we are not using C++20 modules here).
+        set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+    endif()
+
+    # make all program compile with fpic, now, this is set in the toolchain file, but we set it here just in case some dependencies override it
+    # set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
     # export compile command to link with VSCode's cpp IntelliSense
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

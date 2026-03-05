@@ -28,7 +28,7 @@ tools.cmake.cmakedeps:new=will_break_next
 # Set compilers and abi
 # Since using libc++ directly with the MSVC compiler is not straightforward, the recommended approach is to use the Clang compiler in clang-cl mode.
 tools.build:compiler_executables={'c': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang-cl${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'cpp': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang-cl${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'ld': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/lld${CMAKE_HOST_EXECUTABLE_SUFFIX}'}
-tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "x86_64-windows-msvc", "CMAKE_CXX_COMPILER_TARGET": "x86_64-windows-msvc", "CMAKE_C_COMPILER_TARGET": "x86_64-windows-msvc", "CMAKE_ASM_COMPILER_TARGET":"x86_64-windows-msvc", "CMAKE_LINKER_TYPE": "LLD"}
+tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "x86_64-windows-msvc", "CMAKE_CXX_COMPILER_TARGET": "x86_64-windows-msvc", "CMAKE_C_COMPILER_TARGET": "x86_64-windows-msvc", "CMAKE_ASM_COMPILER_TARGET":"x86_64-windows-msvc", "CMAKE_LINKER_TYPE": "LLD", "CMAKE_POSITION_INDEPENDENT_CODE": "ON"}
 
 # Set to use MSVC-compatible flags with clang-cl
 # Note: clang-cl doesn't support -stdlib=libc++, it uses MSVC's standard library

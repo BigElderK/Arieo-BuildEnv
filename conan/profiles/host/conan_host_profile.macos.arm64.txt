@@ -22,7 +22,7 @@ tools.cmake.cmakedeps:new=will_break_next
 
 # Set compilers and abi
 tools.build:compiler_executables={'c': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'cpp': '$ENV{DEVCRAFT_WORKSPACE}/llvm/llvm-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/clang++${CMAKE_HOST_EXECUTABLE_SUFFIX}', 'ld': '$ENV{DEVCRAFT_WORKSPACE}/llvm/lld-21/$ENV{DEVCRAFT_HOST_TRIPLE}/bin/lld${CMAKE_HOST_EXECUTABLE_SUFFIX}'}
-tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "arm64-apple-darwin", "CMAKE_CXX_COMPILER_TARGET":  "arm64-apple-darwin", "CMAKE_C_COMPILER_TARGET": "arm64-apple-darwin", "CMAKE_ASM_COMPILER_TARGET":"arm64-apple-darwin", "CMAKE_LINKER_TYPE": "LLD"}
+tools.cmake.cmaketoolchain:extra_variables={"TARGET_TRIPLE": "arm64-apple-darwin", "CMAKE_CXX_COMPILER_TARGET":  "arm64-apple-darwin", "CMAKE_C_COMPILER_TARGET": "arm64-apple-darwin", "CMAKE_ASM_COMPILER_TARGET":"arm64-apple-darwin", "CMAKE_LINKER_TYPE": "LLD", "CMAKE_POSITION_INDEPENDENT_CODE": "ON"}
 
 # Set MacOSX sdk location
 # tools.apple:sdk_path=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk

@@ -63,6 +63,15 @@ if (${ARIEO_BUILD_CONFIGURE_PRESET} STREQUAL "macos.arm64")
     endif()
 endif()
 
+# Emscripten (WASM32) - requires EMSDK environment variable to be set
+if (${ARIEO_BUILD_CONFIGURE_PRESET} STREQUAL "emscripten.wasm32")
+    if(DEFINED ENV{EMSDK})
+        set(conan_host_profile_file ${CMAKE_CURRENT_LIST_DIR}/conan/profiles/host/conan_host_profile.emscripten.wasm32.txt)
+    else()
+        message(WARNING "Preset emscripten.wasm32 requires EMSDK environment variable. Skipping.")
+    endif()
+endif()
+
 message(STATUS "Using Conan host profile: ${conan_host_profile_file}")
 
 # This target will be built as part of ALL

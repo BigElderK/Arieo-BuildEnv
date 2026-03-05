@@ -12,6 +12,7 @@
         "@ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR@/cmake/presets/ubuntu.x86_64.json",
         "@ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR@/cmake/presets/raspberry.armv8.json",
         "@ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR@/cmake/presets/android.armv8.json",
-        "@ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR@/cmake/presets/windows-dev.x86_64.json"
+        "@ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR@/cmake/presets/windows-dev.x86_64.json",
+        "@ARIEO_CUR_PACKAGE_BUILD_OUTPUT_DIR@/cmake/presets/emscripten.wasm32.json"
     ]
 }

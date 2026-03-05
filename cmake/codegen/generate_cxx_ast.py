@@ -501,7 +501,7 @@ def run_clang_ast_dump(
         output_file: Path to output JSON file
         std: C++ standard version (default: c++20)
         ast_filter: Optional AST filter pattern (e.g., "Arieo::Interface")
-        target_system: Optional target system name (linux, android, windows, macos, raspberry)
+        target_system: Optional target system name (linux, android, windows, macos, raspberry, emscripten)
                       None = auto-detect from include paths
     
     Returns:
@@ -527,6 +527,9 @@ def run_clang_ast_dump(
         elif any("sysroot" in inc_dir.lower() and "android" in inc_dir.lower() 
                 for inc_dir in include_dirs):
             target_system = "android"
+        elif any("emscripten" in inc_dir.lower() or "wasm" in inc_dir.lower()
+                for inc_dir in include_dirs):
+            target_system = "emscripten"
     
     # Regular clang/clang++ uses GCC-style command line options
     cmd = [
@@ -540,6 +543,8 @@ def run_clang_ast_dump(
         "-Xclang", "-detailed-preprocessing-record",
     ]
     
+    emscripten_sysroot_include_dirs = []
+
     # Configure cross-platform compilation based on target_system
     if target_system:
         target_system_lower = target_system.lower()
@@ -585,6 +590,31 @@ def run_clang_ast_dump(
                 "-D__STDC_HOSTED__=1",
             ])
             print(f"Cross-platform mode: Targeting Raspberry Pi (specified: {target_system})")
+        elif target_system_lower in ["emscripten", "webassembly", "wasm"]:
+            cmd.extend([
+                "--target=wasm32-unknown-emscripten",
+                "-D__EMSCRIPTEN__",
+                "-D__STDC_HOSTED__=1",
+            ])
+
+            emscripten_cxx_includes = []
+            for inc_dir in include_dirs:
+                inc_dir_norm = os.path.normpath(inc_dir)
+                inc_dir_lower = inc_dir_norm.lower().replace("\\", "/")
+                if inc_dir_lower.endswith("/cache/sysroot/include"):
+                    emscripten_sysroot_include_dirs.append(inc_dir_norm)
+                    cxx_v1 = os.path.join(inc_dir_norm, "c++", "v1")
+                    if os.path.isdir(cxx_v1):
+                        emscripten_cxx_includes.append(cxx_v1)
+
+            # Order is critical for libc++: c++ headers must be searched before C headers.
+            for cxx_inc in emscripten_cxx_includes:
+                cmd.extend(["-isystem", cxx_inc])
+
+            for c_inc in emscripten_sysroot_include_dirs:
+                cmd.extend(["-isystem", c_inc])
+
+            print(f"Cross-platform mode: Targeting Emscripten (specified: {target_system})")
         else:
             print(f"Warning: Unknown target system '{target_system}', using default cross-platform flags")
     
@@ -598,6 +628,10 @@ def run_clang_ast_dump(
     
     # Add include directories (GCC style: -I path)
     for inc_dir in include_dirs:
+        # For Emscripten, cache/sysroot/include is already injected as ordered
+        # -isystem path (after c++/v1). Do not add it again as -I.
+        if os.path.normpath(inc_dir) in emscripten_sysroot_include_dirs:
+            continue
         cmd.extend(["-I", inc_dir])
         print(f"  Include: {inc_dir}")
     
@@ -1211,7 +1245,7 @@ def main():
     parser.add_argument('--include-dir', action='append', dest='include_dirs', default=[],
                         help='Include directory to add with -I flag (can be specified multiple times)')
     parser.add_argument('--target-system', dest='target_system', default=None,
-                        help='Target system name (linux, android, windows, macos, raspberry)')
+                        help='Target system name (linux, android, windows, macos, raspberry, emscripten)')
     
     args = parser.parse_args()
     
